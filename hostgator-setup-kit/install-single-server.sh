@@ -110,7 +110,7 @@ if [[ ! -f "$SUPABASE_DIR/.env" ]]; then
   trap - EXIT
 fi
 
-cp "$KIT_DIR/supabase-single-server.override.yml" "$SUPABASE_DIR/docker-compose.deskcomm.yml"
+cp "$KIT_DIR/supabase-single-server.override.yml" "$SUPABASE_DIR/docker-compose.wconnect.yml"
 docker network inspect "$SINGLE_SERVER_NETWORK" >/dev/null 2>&1 \
   || docker network create "$SINGLE_SERVER_NETWORK" >/dev/null
 
@@ -127,7 +127,7 @@ set_env_var "$supabase_env" ENABLE_EMAIL_AUTOCONFIRM false
 set_env_var "$supabase_env" PROXY_DOMAIN "$domain"
 set_env_var "$supabase_env" CERTBOT_EMAIL "admin@${domain}"
 set_env_var "$supabase_env" SINGLE_SERVER_NETWORK "$SINGLE_SERVER_NETWORK"
-set_env_var "$supabase_env" COMPOSE_FILE "docker-compose.yml:docker-compose.deskcomm.yml"
+set_env_var "$supabase_env" COMPOSE_FILE "docker-compose.yml:docker-compose.wconnect.yml"
 set_env_var "$supabase_env" COMPOSE_PROJECT_NAME "$(projeto_do_supabase)"
 gw_port="$(ler_env "$supabase_env" API_GW_HTTP_PORT)"
 
@@ -172,7 +172,7 @@ set_env_var "$app_env" SUPABASE_DB_URL "postgresql://postgres:${postgres_passwor
 # publicada das TRES imagens e grava numero de versao (nunca tag movel).
 set_env_var "$app_env" OWNER_EMAIL "$owner_email"
 set_env_var "$app_env" OWNER_PASSWORD "$owner_password"
-set_env_var "$app_env" APP_NAME DeskcommCRM
+set_env_var "$app_env" APP_NAME WConnect
 set_env_var "$app_env" APP_LOCALE pt-BR
 # IA: nenhuma chave e gravada, entao ela nasce sem credencial (desligada) e o
 # fim do install.sh aponta o caminho em IA > Credenciais. Chaves NAO sao

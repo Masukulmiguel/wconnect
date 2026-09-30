@@ -84,8 +84,10 @@ pop_main_do_produto() {
     # URL com host/prefixo que o `sed` não tirou). Só o de `*/` NÃO casa o slug
     # exato — `*/x` exige a barra — e isso devolvia vazio num clone cujo remoto
     # do produto estava certinho.
+    # O slug já saiu em minúsculas (pop_slug_de), então o padrão também é em
+    # minúsculas: comparar com a caixa do GitHub não casa nunca.
     case "$slug" in
-      melgarafael/deskcommcrm | */melgarafael/deskcommcrm)
+      masukulmiguel/wconnect | */masukulmiguel/wconnect)
         printf '%s/main\n' "$r"; return 0 ;;
     esac
   done
@@ -101,8 +103,8 @@ pop_repo_do_produto() {
     [ -n "$url" ] || continue
     slug="$(pop_slug_de "$url")"
     case "$slug" in
-      melgarafael/deskcommcrm | */melgarafael/deskcommcrm)
-        printf 'melgarafael/DeskcommCRM\n'; return 0 ;;
+      masukulmiguel/wconnect | */masukulmiguel/wconnect)
+        printf 'Masukulmiguel/wconnect\n'; return 0 ;;
     esac
   done
   return 1
@@ -271,7 +273,7 @@ pop_dica_proximo_livre() { # $1 = o NNNN em colisão, $2 = base, $3 = populaçã
 pop_aviso_populacao() { # $1 = "base" ou vazio; $2 = nome da base
   local base="${1:-}" nome="${2:-origin/main}"
   if [ -z "$base" ]; then
-    printf 'NÃO MEDIDO: a main do PRODUTO (remoto que aponta para melgarafael/DeskcommCRM) não está neste clone.\n'
+    printf 'NÃO MEDIDO: a main do PRODUTO (remoto que aponta para Masukulmiguel/wconnect) não está neste clone.\n'
   fi
   printf 'PRs ABERTOS (inclusive de fork) NÃO foram medidos aqui: hook e pré-voo não vão à rede.\n'
   printf '  Para medir também os PRs abertos: pnpm checar:colisao-de-migration (roda depois do commit).\n'

@@ -143,7 +143,7 @@ export PATH="$WORK/bin:$PATH"
 # clone ainda não tem `.env` nenhum — que é como o install.sh chega ao
 # `source _common.sh` na prática.
 montar_instalacao() {  # montar_instalacao <raiz> <0|1 sem .env>
-  local raiz="$1" sem_env="${2:-0}" proj="$1/deskcommcrm"
+  local raiz="$1" sem_env="${2:-0}" proj="$1/wconnect"
   mkdir -p "$proj"
   cp -RL "$REPO_ROOT/hostgator-setup-kit" "$proj/"
   mkdir -p "$proj/supabase"
@@ -151,7 +151,7 @@ montar_instalacao() {  # montar_instalacao <raiz> <0|1 sem .env>
   printf 'services:\n  app:\n    image: \${APP_IMAGE:-x}\n' > "$proj/docker-compose.prod.yml"
   if [ "$sem_env" = 0 ]; then
     cat > "$proj/.env" <<ENV
-APP_IMAGE=${NS}/deskcommcrm:0.9.0
+APP_IMAGE=${NS}/wconnect:0.9.0
 APP_PULL_POLICY=missing
 SUPABASE_DB_URL=postgresql://x/y
 NEXT_PUBLIC_APP_URL=https://crm.exemplo.com.br
@@ -165,8 +165,8 @@ ENV
     # sinal de instalação real. Sem esta linha o `docker ps -a -q` do dublê (que
     # devolve vazio) faria esta prova medir uma instalação NOVA, que não é o caso
     # que ela existe para provar.
-    printf 'instalado_em=2026-09-27T00:00:00Z\nversao=0.9.0\n' > "$proj/.deskcomm-instalado"
-    chmod 600 "$proj/.deskcomm-instalado"
+    printf 'instalado_em=2026-09-27T00:00:00Z\nversao=0.9.0\n' > "$proj/.wconnect-instalado"
+    chmod 600 "$proj/.wconnect-instalado"
   fi
   # O overlay do #1143 precisa EXISTIR no projeto: o `construir_aqui_e_subir`
   # passa `-f $COMPOSE_BUILD` para o compose, e um `-f` de arquivo inexistente
@@ -186,7 +186,7 @@ ENV
 
 # rodar_update <raiz> <arch> <0|1 sem imagem publicada> <saída> → RC global
 #
-# A invocação é RELATIVA (`bash deskcommcrm/hostgator-setup-kit/update.sh`) de
+# A invocação é RELATIVA (`bash wconnect/hostgator-setup-kit/update.sh`) de
 # propósito: com o caminho absoluto o `cd` do `enter_project` não mudaria nada
 # e a prova mediria menos. `--to v0.9.0 --force` fixa o alvo, para o teste não
 # depender de nenhum tag novo. `< /dev/null` evita travar num `read -p`.
@@ -196,7 +196,7 @@ rodar_update() {
   RC=0
   ( cd "$raiz" && \
     env FAKE_ARCH="$arch" ARM_SEM_IMAGEM="$sem_imagem" \
-        bash deskcommcrm/hostgator-setup-kit/update.sh --to v0.9.0 --force \
+        bash wconnect/hostgator-setup-kit/update.sh --to v0.9.0 --force \
   ) > "$saida" 2>&1 < /dev/null || RC=$?
 }
 
@@ -318,7 +318,7 @@ echo '      único que o fragmento de release ensina tem de funcionar'
 # é exatamente o comportamento da guarda do #1042: recusa ARM sem olhar nada.
 R5="$WORK/caso5"; mkdir -p "$R5"; montar_instalacao "$R5" 0
 (
-  cd "$R5/deskcommcrm" || exit 1
+  cd "$R5/wconnect" || exit 1
   git checkout --quiet v0.9.0
   sed -i.bak 's/instalacao_real_do_kit_aqui && existe=1/: guarda velha/' hostgator-setup-kit/_common.sh
   rm -f hostgator-setup-kit/_common.sh.bak
@@ -328,7 +328,7 @@ R5="$WORK/caso5"; mkdir -p "$R5"; montar_instalacao "$R5" 0
 OUT5A="$WORK/saida5a.txt"; OUT5B="$WORK/saida5b.txt"
 : > "$DOCKER_LOG"; RC5A=0
 ( cd "$R5" && env FAKE_ARCH=aarch64 ARM_SEM_IMAGEM=1 \
-    bash deskcommcrm/hostgator-setup-kit/update.sh --to v0.9.0 --force \
+    bash wconnect/hostgator-setup-kit/update.sh --to v0.9.0 --force \
 ) > "$OUT5A" 2>&1 < /dev/null || RC5A=$?
 check "com o kit velho no disco, nem --to/--force passam da guarda (rc=$RC5A, e != 0)" \
   test "$RC5A" -ne 0
@@ -337,7 +337,7 @@ check "e o que ele lê é a recusa do #1042" \
 # O passo único, como o fragmento o escreve (sem o `git fetch`, que aqui não
 # tem remoto: a tag já está no repositório descartável).
 : > "$DOCKER_LOG"; RC5B=0
-( cd "$R5/deskcommcrm" && git checkout --quiet v0.9.0 && \
+( cd "$R5/wconnect" && git checkout --quiet v0.9.0 && \
   env FAKE_ARCH=aarch64 ARM_SEM_IMAGEM=1 \
     bash hostgator-setup-kit/update.sh --to v0.9.0 --force \
 ) > "$OUT5B" 2>&1 < /dev/null || RC5B=$?

@@ -4,7 +4,7 @@
 --
 -- ─── O que aconteceu (medido em 2026-09-11 na VPS de produção) ─────────────
 --
--- `crm.deskcomm.com.br/app` mostrava "Algo deu errado" para todo mundo. O log
+-- `crm.wconnect.com.br/app` mostrava "Algo deu errado" para todo mundo. O log
 -- do app tinha uma única causa, em todas as rotas e crons:
 --
 --   PGRST002 "Could not query the database for the schema cache. Retrying."

@@ -174,7 +174,7 @@ O CI tem cinco checks obrigatórios na `main`: `verify`, `build-and-size`, `inva
 `imagens-ok`. Não confie nesta lista — reconte antes de citar:
 
 ```bash
-gh api repos/melgarafael/DeskcommCRM/branches/main/protection \
+gh api repos/Masukulmiguel/wconnect/branches/main/protection \
   --jq '.required_status_checks.contexts|join(", ")'
 ```
 
@@ -197,13 +197,13 @@ cite cada um:
 **Os cinco são checks obrigatórios** na branch protection da `main` — medido em 2026-08-14 @ `741c4ec8` (o comando exige permissão de **admin** no repositório: com token de contribuidor ele devolve `404`, medido em 2026-09-13):
 | Situação                                                                            | Guia                    |
 | ----------------------------------------------------------------------------------- | ----------------------- |
-| Instalar, atualizar ou consertar a instalação numa VPS; domínio, Supabase, WhatsApp | `deskcomm-instalar`     |
-| Configurar o CRM para um cliente ou nicho: agentes, roteadores, follow-ups, base    | `deskcomm-cliente-novo` |
-| Desempenho, conversão, custo de IA, funil, relatório                                | `deskcomm-metricas`     |
-| O agente responde errado, passa tudo para humano, não usa a agenda; afinar o prompt | `deskcomm-prompt`       |
-| Contribuir: corrigir bug, abrir ou atualizar PR, migration, conflito com a `main`   | `deskcomm-contribuir`   |
-| Criar extensão/plugin/módulo de nicho, ou transformar um PR de nicho em pacote      | `deskcomm-extensao`     |
-| Escrever ou revisar código aqui                                                     | `deskcomm-doutrina`     |
+| Instalar, atualizar ou consertar a instalação numa VPS; domínio, Supabase, WhatsApp | `wconnect-instalar`     |
+| Configurar o CRM para um cliente ou nicho: agentes, roteadores, follow-ups, base    | `wconnect-cliente-novo` |
+| Desempenho, conversão, custo de IA, funil, relatório                                | `wconnect-metricas`     |
+| O agente responde errado, passa tudo para humano, não usa a agenda; afinar o prompt | `wconnect-prompt`       |
+| Contribuir: corrigir bug, abrir ou atualizar PR, migration, conflito com a `main`   | `wconnect-contribuir`   |
+| Criar extensão/plugin/módulo de nicho, ou transformar um PR de nicho em pacote      | `wconnect-extensao`     |
+| Escrever ou revisar código aqui                                                     | `wconnect-doutrina`     |
 
 O gate de arquitetura de qualquer peça que atende pessoas é a skill `sistema-vivo` (lei em
 [`docs/doctrine/sistema-vivo.md`](docs/doctrine/sistema-vivo.md)).
@@ -254,7 +254,7 @@ função aparece várias vezes, e quem vale é a **última**. Pergunte ao banco 
 Contar no arquivo responde "o arquivo menciona", não "o banco faz".
 
 **Marca própria (white-label)** — o produto é revendido e o nome não é seu. **Nunca** escreva
-"Deskcomm"/"DeskcommCRM" em código que alcança o usuário: `tests/unit/branding.test.ts` varre
+"WConnect"/"WConnect" em código que alcança o usuário: `tests/unit/branding.test.ts` varre
 `app|components|lib|workers|hooks` e reprova (a allowlist só encolhe). A marca resolve do banco
 (`platform_branding`, `organizations.settings.branding`); `APP_NAME`/`APP_LOGO_URL`/`APP_ACCENT_HEX`
 no `.env` são semente e piso de rollback. Fora do DOM (e-mail, ícone, `issuer` do MFA) use
@@ -528,17 +528,17 @@ casar, mesmo que a pessoa não saiba que ele existe. Fora de um clone (ou num cl
 
 | situação | guia |
 |---|---|
-| instalar, atualizar ou consertar a instalação numa VPS; domínio, Supabase, WhatsApp que não conecta | `deskcomm-instalar` |
-| configurar o CRM para um cliente ou nicho: agentes, roteadores, follow-ups, base de conhecimento | `deskcomm-cliente-novo` |
-| desempenho, conversão, custo de IA, funil, relatório | `deskcomm-metricas` |
-| o agente responde errado, passa tudo para humano, não usa a agenda; melhorar o prompt | `deskcomm-prompt` |
-| contribuir: corrigir bug, abrir ou atualizar PR, migration, conflito com a `main` | `deskcomm-contribuir` — que fica quieto quando `bash .agents/skills/deskcomm-contribuir/scripts/quem-sou.sh` responde `mantenedor` |
-| escrever ou revisar código aqui | `deskcomm-doutrina` (as três regras que mais custam) e `sistema-vivo` (o gate de arquitetura) |
+| instalar, atualizar ou consertar a instalação numa VPS; domínio, Supabase, WhatsApp que não conecta | `wconnect-instalar` |
+| configurar o CRM para um cliente ou nicho: agentes, roteadores, follow-ups, base de conhecimento | `wconnect-cliente-novo` |
+| desempenho, conversão, custo de IA, funil, relatório | `wconnect-metricas` |
+| o agente responde errado, passa tudo para humano, não usa a agenda; melhorar o prompt | `wconnect-prompt` |
+| contribuir: corrigir bug, abrir ou atualizar PR, migration, conflito com a `main` | `wconnect-contribuir` — que fica quieto quando `bash .agents/skills/wconnect-contribuir/scripts/quem-sou.sh` responde `mantenedor` |
+| escrever ou revisar código aqui | `wconnect-doutrina` (as três regras que mais custam) e `sistema-vivo` (o gate de arquitetura) |
 
-Os guias têm vitrine pública em [deskcomm.com.br/guias](https://www.deskcomm.com.br/guias) (pt-BR,
-en, es), escrita à mão no repositório `deskcomm-site` (`conteudo/guias.ts`). Guia criado,
+Os guias têm vitrine pública em [wconnect.com.br/guias](https://www.wconnect.com.br/guias) (pt-BR,
+en, es), escrita à mão no repositório `wconnect-site` (`conteudo/guias.ts`). Guia criado,
 renomeado ou com comando novo → o PR avisa que aquela página precisa acompanhar. Ela sai do mesmo
-PR do `deskcomm-site` que a página de changelog; quem quiser saber se já está no ar usa o `curl` da
+PR do `wconnect-site` que a página de changelog; quem quiser saber se já está no ar usa o `curl` da
 seção "A vitrine" em [`docs/doctrine/versionamento.md`](docs/doctrine/versionamento.md).
 
 ## Regra final — não invente
@@ -555,7 +555,7 @@ nunca o número. O número é calculado a partir do conjunto; confira com `pnpm 
 corte com `pnpm release:cortar`. Régua e porquê: [`docs/doctrine/versionamento.md`](docs/doctrine/versionamento.md).
 Quem instalou lê o [`CHANGELOG.md`](CHANGELOG.md) antes de rodar `update.sh` — mudança que exige
 ação manual aparece sob "⚠️ Requer atenção".
-Toda versão publicada aparece também em [deskcomm.com.br/changelog](https://www.deskcomm.com.br/changelog)
+Toda versão publicada aparece também em [wconnect.com.br/changelog](https://www.wconnect.com.br/changelog)
 (pt-BR, en, es): a LP lê o `CHANGELOG.md` da `main`, ninguém escreve release no site, e o último
 passo do corte reprova se a versão não chegou lá. Mudar o cabeçalho `## [X.Y.Z] — AAAA-MM-DD` quebra
 essa página — ver "A vitrine" em `docs/doctrine/versionamento.md`. Enquanto as três páginas não

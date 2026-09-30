@@ -29,7 +29,7 @@
 
 source "$(dirname "$0")/_common.sh"
 
-ORIGEM_PADRAO="https://extensoes.deskcomm.com.br"
+ORIGEM_PADRAO="https://extensoes.wconnect.com.br"
 ORIGEM="${EXTENSOES_ORIGEM:-$ORIGEM_PADRAO}"
 CATALOGO_URL="${ORIGEM}/catalogo.json"
 

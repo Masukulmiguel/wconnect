@@ -19,7 +19,7 @@ CREATE SCHEMA IF NOT EXISTS "public";
 ALTER SCHEMA "public" OWNER TO "pg_database_owner";
 
 
-COMMENT ON SCHEMA "public" IS 'DeskcommCRM v0.1 - Migration 0001 platform_base applied 2026-04-28';
+COMMENT ON SCHEMA "public" IS 'WConnect v0.1 - Migration 0001 platform_base applied 2026-04-28';
 
 
 
@@ -1775,7 +1775,7 @@ CREATE TABLE IF NOT EXISTS "public"."organizations" (
 ALTER TABLE "public"."organizations" OWNER TO "postgres";
 
 
-COMMENT ON TABLE "public"."organizations" IS 'Tenants do DeskcommCRM. Cada linha = 1 e-commerce cliente.';
+COMMENT ON TABLE "public"."organizations" IS 'Tenants do WConnect. Cada linha = 1 e-commerce cliente.';
 
 
 
@@ -21186,7 +21186,7 @@ begin
    if not c.available or c.access_role not in ('owner','writer') then
     update public.calendar_appointments set google_sync_error='A agenda de destino não permite publicação. Confira o acesso nas configurações.',google_next_attempt_at=now()+interval '15 minutes' where organization_id=p_org and id=p_id;return null;end if;
    update public.calendar_appointments set google_connection_id=c.connection_id,google_calendar_id=c.external_calendar_id,
-    google_event_id='deskcommapp'||replace(id::text,'-',''),google_pending_write='{"reservation":true}'::jsonb where organization_id=p_org and id=p_id returning * into a;
+    google_event_id='wconnectapp'||replace(id::text,'-',''),google_pending_write='{"reservation":true}'::jsonb where organization_id=p_org and id=p_id returning * into a;
   end if;
   update public.calendar_appointments set google_claim_token=gen_random_uuid(),google_claim_epoch=google_claim_epoch+1,
    google_claim_until=clock_timestamp()+interval '90 seconds' where organization_id=p_org and id=p_id returning * into a;
@@ -21644,7 +21644,7 @@ begin
    if not c.available or c.access_role not in ('owner','writer') then
     update public.calendar_appointments set google_sync_error='A agenda de destino não permite publicação. Confira o acesso nas configurações.',google_next_attempt_at=now()+interval '15 minutes' where organization_id=p_org and id=p_id;return null;end if;
    update public.calendar_appointments set google_connection_id=c.connection_id,google_calendar_id=c.external_calendar_id,
-    google_event_id='deskcommapp'||replace(id::text,'-',''),google_pending_write='{"reservation":true}'::jsonb where organization_id=p_org and id=p_id returning * into a;
+    google_event_id='wconnectapp'||replace(id::text,'-',''),google_pending_write='{"reservation":true}'::jsonb where organization_id=p_org and id=p_id returning * into a;
   end if;
   update public.calendar_appointments set google_claim_token=gen_random_uuid(),google_claim_epoch=google_claim_epoch+1,
    google_claim_until=clock_timestamp()+interval '90 seconds' where organization_id=p_org and id=p_id returning * into a;
@@ -25596,7 +25596,7 @@ begin
   -- sem um sinal explícito a guarda da seção 4b barraria o próprio sistema. A
   -- chave é de TRANSAÇÃO (`set_config(..., true)`) e volta a 'off' na linha
   -- seguinte: a janela é o UPDATE, não o resto da transação.
-  perform set_config('deskcomm.cliente_pela_agenda', 'on', true);
+  perform set_config('wconnect.cliente_pela_agenda', 'on', true);
 
   update public.contacts
      set first_service_at = v_depois,
@@ -25607,7 +25607,7 @@ begin
    where organization_id = p_org
      and id = p_contact;
 
-  perform set_config('deskcomm.cliente_pela_agenda', 'off', true);
+  perform set_config('wconnect.cliente_pela_agenda', 'off', true);
 
   -- UMA VEZ POR CONTATO: só quando a etiqueta entra na primeira vez que a regra
   -- o reconhece.
@@ -25679,7 +25679,7 @@ revoke execute on function public.fn_recalcular_cliente_do_contato(uuid, uuid, b
 --     e a etiqueta passa a ser dela. Com o dono já nulo não há o que
 --     reconciliar, que é o caso da esmagadora maioria das edições de tag.
 --
--- A CHAVE `deskcomm.cliente_pela_agenda` é de transação e não é alcançável de
+-- A CHAVE `wconnect.cliente_pela_agenda` é de transação e não é alcançável de
 -- fora: o PostgREST não envia SQL solto, e `set_config` mora em `pg_catalog`,
 -- fora do schema exposto. Ela existe porque `auth.uid()` continua preenchido
 -- dentro da `security definer` chamada pela sessão.
@@ -25692,7 +25692,7 @@ declare
   c_etiqueta constant text := 'cliente';
 begin
   if auth.uid() is not null
-     and coalesce(current_setting('deskcomm.cliente_pela_agenda', true), '') <> 'on'
+     and coalesce(current_setting('wconnect.cliente_pela_agenda', true), '') <> 'on'
      and (old.first_service_at is distinct from new.first_service_at
        or old.client_recognized_at is distinct from new.client_recognized_at
        or old.client_tag_by_system is distinct from new.client_tag_by_system) then
@@ -43248,7 +43248,7 @@ comment on table public.platform_meta_app is
 comment on column public.platform_meta_app.app_secret_encrypted is
   'Cifrado por fn_encrypt_oauth (pgp_sym_encrypt/aes256). Nunca gravar em claro: sem a chave mestra o save recusa. Quem tem este valor assina uma entrega de webhook válida com dados inventados.';
 comment on column public.platform_meta_app.verify_token_encrypted is
-  'Cifrado por fn_encrypt_oauth. Gerado pelo SERVIDOR (32 bytes de CSPRNG) e exibido UMA vez: não há leitura que o devolva em claro — quem perde o valor usa a rotação da tela. Um token escolhido à mão ("deskcomm", o nome da empresa) é adivinhável, e quem o acerta passa a receber o tráfego do webhook.';
+  'Cifrado por fn_encrypt_oauth. Gerado pelo SERVIDOR (32 bytes de CSPRNG) e exibido UMA vez: não há leitura que o devolva em claro — quem perde o valor usa a rotação da tela. Um token escolhido à mão ("wconnect", o nome da empresa) é adivinhável, e quem o acerta passa a receber o tráfego do webhook.';
 comment on column public.platform_meta_app.verify_token_created_at is
   'Quando o verify token em vigor nasceu. A tela mostra a data para quem acabou de rotacionar saber se o valor colado no painel da Meta é o novo.';
 

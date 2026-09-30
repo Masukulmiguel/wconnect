@@ -121,7 +121,7 @@ unset $(git rev-parse --local-env-vars)
 export GIT_CEILING_DIRECTORIES="$TMP"
 export GIT_AUTHOR_NAME="Teste" GIT_AUTHOR_EMAIL="teste@exemplo.invalid"
 export GIT_COMMITTER_NAME="Teste" GIT_COMMITTER_EMAIL="teste@exemplo.invalid"
-unset DESKCOMM_GOV_INVARIANTS_EDIT DESKCOMM_GOV_PLAN_EDIT || true
+unset WCONNECT_GOV_INVARIANTS_EDIT WCONNECT_GOV_PLAN_EDIT || true
 
 INV=tests/invariants/exemplo-congelado.test.ts
 FEAT=plan/features.json
@@ -355,8 +355,8 @@ r=$(rodar "$a" freeze-invariants.sh)
 assert_exit "$(exit_de "$r")" 1 "A: edição genuína fora de merge SEGUE bloqueada"
 
 # CASO VÁLVULA · o mesmo estado A, com a env declarada
-saida=$( cd "$a" && DESKCOMM_GOV_INVARIANTS_EDIT=1 bash loop/hooks/freeze-invariants.sh 2>&1 ); rc=$?
-assert_exit "$rc" 0 "VÁLVULA: DESKCOMM_GOV_INVARIANTS_EDIT=1 segue liberando o estado A"
+saida=$( cd "$a" && WCONNECT_GOV_INVARIANTS_EDIT=1 bash loop/hooks/freeze-invariants.sh 2>&1 ); rc=$?
+assert_exit "$rc" 0 "VÁLVULA: WCONNECT_GOV_INVARIANTS_EDIT=1 segue liberando o estado A"
 
 # ── #1324 · o `M` diz O QUE mudou, não só que mudou ─────────────────────────────────
 # O eixo acima (A, VÁLVULA) mede a PERMISSÃO. Este mede o OBJETO: um `M` cujo diff,
@@ -391,7 +391,7 @@ if [ "$(linhas_do_diff "$cl" "$INV" | grep -c '^[<>] *//')" = "2" ] && [ "$(linh
   ok "COMENTARIO-LINHA: a premissa — as DUAS linhas que o diff bruto mexe são de COMENTÁRIO"
 else falha "COMENTARIO-LINHA: as duas linhas do diff são de comentário" "diff: $(linhas_do_diff "$cl" "$INV")"; fi
 r=$(rodar "$cl" freeze-invariants.sh)
-assert_exit "$(exit_de "$r")" 0 "COMENTARIO-LINHA: mudar SÓ o comentário LIBERA sem DESKCOMM_GOV_INVARIANTS_EDIT"
+assert_exit "$(exit_de "$r")" 0 "COMENTARIO-LINHA: mudar SÓ o comentário LIBERA sem WCONNECT_GOV_INVARIANTS_EDIT"
 saida=$( cd "$cl" && git commit --no-edit -m "renumera a migration citada em comentario" 2>&1 ); rc=$?
 assert_exit "$rc" 0 'COMENTARIO-LINHA: e pelo caminho de produção (git commit, dispatcher) o commit PASSA'
 
@@ -463,8 +463,8 @@ commitar "$ff" "o invariante com o test.fails"
 sed -i 's/it\.fails(/it(/' "$ff/$INV"; git -C "$ff" add "$INV"
 r=$(rodar "$ff" freeze-invariants.sh)
 assert_exit "$(exit_de "$r")" 1 "FLIP-FAILS: o flip documentado SEGUE BLOQUEADO sem a válvula"
-saida=$( cd "$ff" && DESKCOMM_GOV_INVARIANTS_EDIT=1 bash loop/hooks/freeze-invariants.sh 2>&1 ); rc=$?
-assert_exit "$rc" 0 "FLIP-FAILS: e com DESKCOMM_GOV_INVARIANTS_EDIT=1 segue liberado (a exceção declarada não se perdeu)"
+saida=$( cd "$ff" && WCONNECT_GOV_INVARIANTS_EDIT=1 bash loop/hooks/freeze-invariants.sh 2>&1 ); rc=$?
+assert_exit "$rc" 0 "FLIP-FAILS: e com WCONNECT_GOV_INVARIANTS_EDIT=1 segue liberado (a exceção declarada não se perdeu)"
 
 # CASO COMENTARIO-MODO · o limite do LIMITE: se o MODO mudou junto, não é "só comentário".
 # Os blobs ficam IDÊNTICOS num `chmod +x` (é a cegueira que a CONDIÇÃO 5 tapa no eixo do
@@ -544,7 +544,7 @@ assert_exit "$(exit_de "$r")" 0 "ADD: acrescentar invariante novo segue liberado
 r1="$TMP/r1"; preparar "$r1" "$principal" "$BASE_DA_BRANCH"
 inv "" "$MARCA_BRANCH" "" > "$r1/$INV"
 git -C "$r1" add "$INV"
-saida=$( cd "$r1" && DESKCOMM_GOV_INVARIANTS_EDIT=1 git commit --no-edit -m "fortalece o invariante (ato legitimo)" 2>&1 ); rc=$?
+saida=$( cd "$r1" && WCONNECT_GOV_INVARIANTS_EDIT=1 git commit --no-edit -m "fortalece o invariante (ato legitimo)" 2>&1 ); rc=$?
 assert_exit "$rc" 0 "R1: fortalecer o invariante COM a válvula passa — é o ato que monta o estado"
 # A sonda da consequência é pelo MARCADOR, não pela CONTAGEM — e isto foi medido, não
 # escolhido: com `grep -c 'test('` o caso passava sob sabotagem, porque a versão da main
@@ -638,7 +638,7 @@ else falha "FURO-A-MH: o MARCADOR-COLEGA sobreviveu no HEAD" "foi apagado: o com
 # É o caso que faz a condição 2 (`is-ancestor … origin/main`) existir.
 fb2="$TMP/fb-stash"; preparar "$fb2" "$principal" "$BASE_DA_BRANCH"
 inv "" "$MARCA_BRANCH" "" > "$fb2/$INV"; git -C "$fb2" add "$INV"
-saida=$( cd "$fb2" && DESKCOMM_GOV_INVARIANTS_EDIT=1 git commit --no-edit -m "fortalece o invariante (ato legitimo)" 2>&1 ); rc=$?
+saida=$( cd "$fb2" && WCONNECT_GOV_INVARIANTS_EDIT=1 git commit --no-edit -m "fortalece o invariante (ato legitimo)" 2>&1 ); rc=$?
 assert_exit "$rc" 0 "FURO-B: fortalecer COM a válvula passa — é o ato que monta o estado"
 inv > "$fb2/$INV"                       # enfraquece no working tree (tira o MARCADOR-BRANCH)
 git -C "$fb2" stash push -q -m enfraquecimento

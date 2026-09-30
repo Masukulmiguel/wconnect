@@ -66,7 +66,7 @@ unset $(git rev-parse --local-env-vars)
 export GIT_CEILING_DIRECTORIES="$TMP"
 export GIT_AUTHOR_NAME="Teste" GIT_AUTHOR_EMAIL="teste@exemplo.invalid"
 export GIT_COMMITTER_NAME="Teste" GIT_COMMITTER_EMAIL="teste@exemplo.invalid"
-unset DESKCOMM_GOV_INVARIANTS_EDIT DESKCOMM_GOV_PLAN_EDIT DESKCOMM_GOV_MIGRATION_EDIT || true
+unset WCONNECT_GOV_INVARIANTS_EDIT WCONNECT_GOV_PLAN_EDIT WCONNECT_GOV_MIGRATION_EDIT || true
 
 INV=tests/invariants/exemplo-congelado.test.ts
 commitar() { git -C "$1" add -A >/dev/null && git -C "$1" commit -q --no-verify -m "$2"; }
@@ -253,7 +253,7 @@ assert_igual "$(git -C "$m3s" rev-parse HEAD)" "$SHA_M3S" "M3-SEM-SINAL: e o HEA
 m3b="$TMP/m3b"; armar "$m3b" "$principal" "$BASE"
 printf 'só trabalho meu\n' > "$m3b/meu-trabalho.txt"
 commitar "$m3b" "commit próprio, sem tocar no invariante"
-r=$(merge_auto "$m3b" "DESKCOMM_GOV_INVARIANTS_EDIT=1" origin/main)
+r=$(merge_auto "$m3b" "WCONNECT_GOV_INVARIANTS_EDIT=1" origin/main)
 assert_exit "$(exit_de "$r")" 0 "M3: com a válvula declarada o MESMO merge segue passando (a saída não foi retirada)"
 assert_igual "$(pais_de "$m3b")" "2" "M3: e o merge foi mesmo feito"
 assert_contains "$(git -C "$m3b" show "HEAD:$INV")" "MARCADOR-MAIN" "M3: e o invariante da main chegou ao HEAD"

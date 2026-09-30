@@ -35,7 +35,7 @@ const DESTINO = join(RAIZ, "extensoes", "catalogo.json");
  * Qual subdomínio é decisão do dono (DEC-007). Até lá o valor abaixo é o padrão declarado,
  * e `EXTENSOES_ORIGEM` troca sem tocar em código. Publicar de fato continua sendo ato dele.
  */
-const ORIGEM = process.env.EXTENSOES_ORIGEM ?? "https://extensoes.deskcomm.com.br";
+const ORIGEM = process.env.EXTENSOES_ORIGEM ?? "https://extensoes.wconnect.com.br";
 
 function arquivosDePacote(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entrada) => {

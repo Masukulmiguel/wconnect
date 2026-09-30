@@ -4,7 +4,7 @@ Todas as mudanças relevantes deste projeto são documentadas aqui.
 
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 
-Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual está atualizando antes de rodar `bash update.sh`**. Mudanças que exigem ação manual aparecem sob **⚠️ Requer atenção**.
+Se você roda o WConnect numa VPS, **leia a seção da versão para a qual está atualizando antes de rodar `bash update.sh`**. Mudanças que exigem ação manual aparecem sob **⚠️ Requer atenção**.
 
 ## [Não lançado]
 
@@ -413,7 +413,7 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
 
 - **O lint da suíte passa a rodar o ESLint 10, e sai a versão que o registro do npm aposentou** O `pnpm lint`, executado pelo check obrigatório `verify`, rodava o ESLint 9.39.5, marcado como sem suporte pelo registro do npm. Agora roda o 10.11.0, que produz as mesmas mensagens, arquivo por arquivo, sem nenhuma regra mudada; o `AGENTS.md` declara a major nova e um teste passa a conferi-la. O ESLint não roda no produto: nada muda na imagem nem para quem opera a instalação.
 
-  Levantamento de @melgarafael (#297). Contribuição de @in100tiva (#1840).
+  Levantamento de @wconnect (#297). Contribuição de @in100tiva (#1840).
 
 ### Corrigido
 
@@ -483,7 +483,7 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
 
   Contribuição de @Draven9 (#1826).
 
-- **O webhook de saída passa a levar id de entrega, número da tentativa e assinatura com carimbo de tempo** A ação "Avisar outro sistema (webhook)" das automações passa a mandar, em toda chamada, quatro cabeçalhos novos: X-Webhook-Delivery, um id que é o mesmo em todas as tentativas da mesma entrega e também no botão Reenviar; X-Webhook-Attempt, o número da tentativa, que no Reenviar continua a contagem; X-Webhook-Timestamp, a hora do envio; e X-Webhook-Signature, uma assinatura que cobre a hora e o id da entrega além do corpo. Com eles, o sistema que recebe consegue recusar uma requisição capturada e repetida e reconhecer uma retentativa como a mesma entrega. O cabeçalho X-Deskcomm-Signature continua saindo exatamente como antes, então quem confere a assinatura não precisa mudar a conferência. Quem passar a conferir o X-Webhook-Signature deve, a partir daí, recusar a requisição que chega sem ele, em vez de cair para o legado: o legado só cobre o corpo, e uma requisição capturada com a assinatura nova apagada seria aceita a qualquer tempo. No corpo entram dois campos: delivery_id, o mesmo id do cabeçalho, e happened_at, a hora em que o fato aconteceu, que é a mesma no Reenviar. O occurred_at não muda: segue sendo a hora em que o sistema montou a entrega, como antes. Para medir a idade da requisição, a medida certa é o t de dentro do X-Webhook-Signature, que é a hora de cada tentativa e é coberto pela assinatura. O X-Webhook-Timestamp leva o mesmo número mas é só informativo: nenhuma assinatura o cobre, assim como o X-Deskcomm-Event e o X-Webhook-Attempt, e medir a idade por ele deixa passar uma requisição velha repetida com esse cabeçalho trocado. O guia de verificação, com exemplos em Node e Python, está em docs/integracao/webhooks-de-saida.md. Proposta de @franceschini-lucas (#1529).
+- **O webhook de saída passa a levar id de entrega, número da tentativa e assinatura com carimbo de tempo** A ação "Avisar outro sistema (webhook)" das automações passa a mandar, em toda chamada, quatro cabeçalhos novos: X-Webhook-Delivery, um id que é o mesmo em todas as tentativas da mesma entrega e também no botão Reenviar; X-Webhook-Attempt, o número da tentativa, que no Reenviar continua a contagem; X-Webhook-Timestamp, a hora do envio; e X-Webhook-Signature, uma assinatura que cobre a hora e o id da entrega além do corpo. Com eles, o sistema que recebe consegue recusar uma requisição capturada e repetida e reconhecer uma retentativa como a mesma entrega. O cabeçalho X-WConnect-Signature continua saindo exatamente como antes, então quem confere a assinatura não precisa mudar a conferência. Quem passar a conferir o X-Webhook-Signature deve, a partir daí, recusar a requisição que chega sem ele, em vez de cair para o legado: o legado só cobre o corpo, e uma requisição capturada com a assinatura nova apagada seria aceita a qualquer tempo. No corpo entram dois campos: delivery_id, o mesmo id do cabeçalho, e happened_at, a hora em que o fato aconteceu, que é a mesma no Reenviar. O occurred_at não muda: segue sendo a hora em que o sistema montou a entrega, como antes. Para medir a idade da requisição, a medida certa é o t de dentro do X-Webhook-Signature, que é a hora de cada tentativa e é coberto pela assinatura. O X-Webhook-Timestamp leva o mesmo número mas é só informativo: nenhuma assinatura o cobre, assim como o X-WConnect-Event e o X-Webhook-Attempt, e medir a idade por ele deixa passar uma requisição velha repetida com esse cabeçalho trocado. O guia de verificação, com exemplos em Node e Python, está em docs/integracao/webhooks-de-saida.md. Proposta de @franceschini-lucas (#1529).
 
   Contribuição de @in100tiva (#1830).
 
@@ -667,7 +667,7 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
   brinde, "me tira da lista de espera", que é paciente pedindo para ser chamado,
   deixou de bloquear.
 
-  Contribuição de @deskcommopp4s-cmd (#1607, trazida no #1805).
+  Contribuição de @wconnectopp4s-cmd (#1607, trazida no #1805).
 
 ## [1.56.0] — 2026-09-27
 
@@ -837,7 +837,7 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
 
   Contribuição de @webtecnica (#1770, issue #533).
 
-- **Quem já tinha o DeskcommCRM rodando em ARM (VPS aarch64) volta a conseguir atualizar** Quem já tinha o DeskcommCRM instalado numa VPS ARM (Oracle Ampere, aarch64)
+- **Quem já tinha o WConnect rodando em ARM (VPS aarch64) volta a conseguir atualizar** Quem já tinha o WConnect instalado numa VPS ARM (Oracle Ampere, aarch64)
   volta a conseguir rodar `update.sh`. Desde a v1.35.0 a atualização era recusada
   logo na primeira linha, dizendo que só existe VPS x86_64, mesmo onde o CRM já
   estava funcionando. Agora, onde já existe instalação, a recusa vira um aviso e
@@ -863,7 +863,7 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
 
   Contribuição de @webtecnica (#1775).
 
-- **Instalar pela primeira vez numa VPS ARM volta a ser recusado, mesmo com o .env já preenchido** Se você começou a instalar o DeskcommCRM numa VPS ARM (Oracle Ampere,
+- **Instalar pela primeira vez numa VPS ARM volta a ser recusado, mesmo com o .env já preenchido** Se você começou a instalar o WConnect numa VPS ARM (Oracle Ampere,
   aarch64) com o `.env` já preenchido — copiado de outra máquina, gerado por
   automação, ou deixado por uma instalação que parou no meio —, o `install.sh`
   não recusava como devia: confundia a pasta com uma instalação que já estava no
@@ -871,8 +871,8 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
   recusa logo no começo e orienta a usar uma VPS x86_64/amd64.
 
   A instalação passa a ser reconhecida pelo que ela deixou de verdade: os
-  contêineres do DeskcommCRM (ou do seu Supabase) no Docker, parados ou
-  rodando, ou o arquivo `.deskcomm-instalado` que o próprio instalador grava
+  contêineres do WConnect (ou do seu Supabase) no Docker, parados ou
+  rodando, ou o arquivo `.wconnect-instalado` que o próprio instalador grava
   quando termina. Quem já tem o CRM numa VPS ARM continua atualizando
   normalmente, com o aviso e o build local de sempre. Para quem instalou antes
   desta versão e ainda não tem o arquivo, o `update.sh` desta versão em diante
@@ -1241,7 +1241,7 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
 
 - **Instale o rastreio de origem nos botões de WhatsApp do site** Conversões oferece um script para copiar e instalar no site. Ele preserva os identificadores da visita durante a navegação na mesma aba e ajusta os links dos números configurados, incluindo botões adicionados depois. O CRM gera o código curto no clique e associa a mensagem à origem quando o visitante o envia. A instalação é opcional e tem instruções e limites na própria tela. Contribuição de @gustavorodcruz96 (#1566).
 
-- **O instalador pergunta em que idioma ele mesmo fala — português ou español** O `install.sh` estava inteiramente em português, mesmo permitindo escolher espanhol como idioma da aplicação web instalada: um operador hispanohablante precisava entender português para concluir a própria instalação. Agora a primeira pergunta interativa, antes de qualquer outra saída, é o idioma da instalação (Português/Español), e as mensagens do instalador saem nesse idioma; a saída de outros programas, como `docker` e `git`, continua como vem deles. A escolha é gravada em `DESKCOMM_IDIOMA_CLI` no `.env` e, nas reexecuções, o `install.sh` a lê de lá e não pergunta de novo, nem com `--yes`. Quem prefere fixá-la sem perguntar pode rodar com `DESKCOMM_IDIOMA_CLI=es` (ou `pt-BR`) no ambiente. Sem escolha e sem terminal, o instalador fala português, como sempre falou. O espanhol exige bash 4.4 ou superior (o CentOS 7 traz o 4.2): em um bash mais antigo o instalador avisa, em português e em espanhol, e segue em português. Fora do escopo desta passada: `update.sh`, `backup.sh`, `diagnostico.sh` e os demais scripts do kit seguem só em português, mesmo com a chave no `.env`; ficam para uma próxima passada. Contribuição de @JowaniOrantes (#1689).
+- **O instalador pergunta em que idioma ele mesmo fala — português ou español** O `install.sh` estava inteiramente em português, mesmo permitindo escolher espanhol como idioma da aplicação web instalada: um operador hispanohablante precisava entender português para concluir a própria instalação. Agora a primeira pergunta interativa, antes de qualquer outra saída, é o idioma da instalação (Português/Español), e as mensagens do instalador saem nesse idioma; a saída de outros programas, como `docker` e `git`, continua como vem deles. A escolha é gravada em `WCONNECT_IDIOMA_CLI` no `.env` e, nas reexecuções, o `install.sh` a lê de lá e não pergunta de novo, nem com `--yes`. Quem prefere fixá-la sem perguntar pode rodar com `WCONNECT_IDIOMA_CLI=es` (ou `pt-BR`) no ambiente. Sem escolha e sem terminal, o instalador fala português, como sempre falou. O espanhol exige bash 4.4 ou superior (o CentOS 7 traz o 4.2): em um bash mais antigo o instalador avisa, em português e em espanhol, e segue em português. Fora do escopo desta passada: `update.sh`, `backup.sh`, `diagnostico.sh` e os demais scripts do kit seguem só em português, mesmo com a chave no `.env`; ficam para uma próxima passada. Contribuição de @JowaniOrantes (#1689).
 
 - **O Jev passa a observar qual agente deve atender, ao lado do seu roteador de intenção** O Jev ganha a terceira tarefa: **Escolher qual agente atende**. Onde há um roteador de intenção ativo (**IA › Roteadores**), a cada mensagem nova do cliente a sua IA de sempre escolhe a intenção — e, com ela, o agente que atende. O Jev responde a mesma pergunta, entre as mesmas intenções, ao mesmo tempo. Enquanto ele só observa, a resposta ao cliente **não espera por ele**: a resposta dele é guardada quando chega.
 
@@ -1483,7 +1483,7 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
 
 - **O agente espera a foto ficar legível quando o cliente manda a foto e depois escreve** Quando o cliente mandava uma foto (um comprovante, por exemplo) e logo depois escrevia a pergunta em outra mensagem, o turno do agente saía pela mensagem de texto sem esperar a leitura da foto, e o agente pedia ao cliente que descrevesse uma imagem que o sistema terminava de ler segundos depois. Agora a espera olha a conversa inteira: se há mídia recebida ainda sendo lida, o turno aguarda até o mesmo teto de antes, contado a partir da hora em que a mídia chegou. Mídia que o sistema não vai ler (vídeo com leitura desligada, arquivo que não chegou ao storage) não segura a resposta.
 
-  Contribuição de @deskcommopp4s-cmd (#1594).
+  Contribuição de @wconnectopp4s-cmd (#1594).
 
 ## [1.48.0] — 2026-09-24
 
@@ -1521,7 +1521,7 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
 
 - **Quem administra pode desfazer o descadastro de um contato** Quando um cliente pede para sair ("parar de me mandar", "sair da lista"), o contato fica bloqueado e nada automático volta a escrever para ele: campanha, follow-up, lembrete e IA param. Até aqui o bloqueio não tinha volta, nem para quem mudou de ideia nem para quem caiu num falso positivo. Agora quem tem papel de administrador vê o botão **Desbloquear** na tela do contato bloqueado. A ação pede confirmação e fica registrada na auditoria (`contact.unblocked`), ao lado do registro do pedido original, que continua lá. Desbloquear devolve o direito de enviar, mas não retoma follow-up nem campanha cancelados, e um novo pedido de descadastro do cliente volta a bloquear o contato.
 
-  Contribuição de @deskcommopp4s-cmd (#1604).
+  Contribuição de @wconnectopp4s-cmd (#1604).
 
 - **Editar e apagar mensagens enviadas pela Inbox** O atendente pode editar uma mensagem de texto própria recente ou apagar uma mensagem enviada para todos diretamente na Inbox quando o canal usa WAHA. O CRM confirma a ação no WhatsApp antes de atualizar o histórico e registra quem a executou.
 
@@ -2075,7 +2075,7 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
 
   Contribuição de @betoarts (recorte do #714, entrou pelo #1464).
 
-- **Um comando sobe o DeskcommCRM inteiro na sua própria máquina** Até aqui, rodar o DeskcommCRM fora de um servidor exigia montar tudo à mão: banco, autenticação, WhatsApp e fila, cada um com a sua configuração. O instalador da VPS não serve para isso, porque ele assume domínio próprio e proxy na frente.
+- **Um comando sobe o WConnect inteiro na sua própria máquina** Até aqui, rodar o WConnect fora de um servidor exigia montar tudo à mão: banco, autenticação, WhatsApp e fila, cada um com a sua configuração. O instalador da VPS não serve para isso, porque ele assume domínio próprio e proxy na frente.
 
   Agora existe um caminho local: `./ubuntu-local-installer.sh` prepara a máquina, sobe o banco com a estrutura oficial do produto, gera as chaves, levanta a aplicação, o worker, o WhatsApp e a fila, e cria o usuário administrador — imprimindo no fim o endereço e a senha. Depois disso, `pnpm local:up`, `local:status`, `local:logs` e `local:down` cuidam do dia a dia. O passo a passo está em `docs/SETUP.md`.
 
@@ -2430,7 +2430,7 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
   O link da mídia também pode ficar salvo no modelo: marque "Salvar este link no modelo" e
   ele vem preenchido nos próximos envios. Crédito: @rafaelbatistazz.
 
-- **Conectar o Google funciona quando você abre a instalação por localhost** Quem instala o DeskcommCRM no próprio computador e abre o sistema por `http://localhost:3000` não conseguia terminar a conexão com o Google Agenda: o endereço de retorno oferecido era sempre o que ficou gravado na instalação (o IP da máquina na rede, por exemplo), e o Google compara esse endereço letra por letra. A conexão voltava para outro endereço e nunca se completava.
+- **Conectar o Google funciona quando você abre a instalação por localhost** Quem instala o WConnect no próprio computador e abre o sistema por `http://localhost:3000` não conseguia terminar a conexão com o Google Agenda: o endereço de retorno oferecido era sempre o que ficou gravado na instalação (o IP da máquina na rede, por exemplo), e o Google compara esse endereço letra por letra. A conexão voltava para outro endereço e nunca se completava.
 
   Agora, **quando e só quando** o navegador abre o sistema por `localhost` (ou `127.0.0.1`), o endereço de retorno acompanha — e é o mesmo que a tela mostra para você colar no painel do Google. Qualquer outro endereço continua perdendo para o endereço oficial da instalação, então nada muda para quem roda em servidor com domínio próprio.
 
@@ -2753,7 +2753,7 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
   o mesmo painel do quadro — foco preso, papel de diálogo de alerta —, o botão que abre a gaveta diz
   qual lista ele controla, e a recusa da exclusão tem endereço próprio. Crédito: @webtecnica.
 
-- **A imagem do módulo de telefonia voltou a construir** A imagem `deskcomm-voice-agent`, que o módulo opcional de telefonia usa, não
+- **A imagem do módulo de telefonia voltou a construir** A imagem `wconnect-voice-agent`, que o módulo opcional de telefonia usa, não
   chegava a ser criada: a receita dela não copiava o diretório `patches/`, e o
   `pnpm install` morria antes de instalar qualquer dependência.
 
@@ -2880,7 +2880,7 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
   raciocínio continua ligado. A mudança vale só para a DeepSeek — Anthropic, OpenAI, Google
   e OpenRouter não são afetadas.
 
-  Contribuição de @deskcommopp4s-cmd (#1275).
+  Contribuição de @wconnectopp4s-cmd (#1275).
 
 - **Um comando tira esta instalação do Docker sem encostar no resto do servidor** Tirar o CRM de uma VPS era trabalho manual, e o atalho que todo mundo conhece — `docker system
   prune -a` — é o errado: numa VPS que hospeda mais de uma coisa, ele leva junto containers, volumes
@@ -2923,7 +2923,7 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
   você deixa em branco. Nada muda nas instalações que já usam outro provedor: a opção nasce
   disponível, não ligada.
 
-  Contribuição de @deskcommopp4s-cmd (#1275).
+  Contribuição de @wconnectopp4s-cmd (#1275).
 
 - **Um sistema externo pode criar empresas no CRM, se o dono da instalação ligar** Nova rota `POST /api/v1/tenants/provision`: um sistema de fora cria uma empresa no CRM, com a pessoa dona e uma chave de API para operá-la (com permissão de atendente), sem passar pela tela de cadastro. Repetir o pedido para a mesma empresa não cria outra: devolve a mesma empresa e uma chave nova, e a anterior deixa de valer. Se o e-mail da pessoa dona já tem conta nesta instalação, o pedido é recusado e nada é criado — quem quer essa pessoa numa empresa a convida pela tela da empresa (decisão do dono, 19/09). E se um pedido falhar no meio (o banco fora do ar por um instante, por exemplo), basta o sistema de fora repetir: ele retoma de onde parou e conclui o cadastro — a empresa criada **e** a pessoa dona com acesso a ela —, em vez de ficar dizendo para sempre que aquele e-mail já tem conta, ou de responder "está tudo certo" sobre uma empresa em que ninguém consegue entrar.
 
@@ -3584,7 +3584,7 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
 
   Com a trava enxergando essas frases, o agente que promete olhar a agenda é obrigado a consultá-la no mesmo turno — e responde com os horários reais (ou explica o que impediu), em vez de deixar o cliente esperando. Conversa comum que só menciona o atendimento ("o atendimento de vocês é ótimo") continua passando normalmente.
 
-- **A guarda da release confere a identidade do PR de origem, e não o nome do autor do commit** O passo que decide se um push para a `main` corta tag de release conferia o NOME de autor do commit — campo de texto que quem commita escolhe, e que era um literal dentro do próprio `release.yml`. Agora ele pergunta à API do GitHub quem abriu o PR de origem daquele merge, e só corta a tag quando o PR foi aberto pelo bot do App da release ou quando o head do PR é um branch `release/*` do repositório de cima, que é o caminho por onde um corte legítimo passa. Um commit que se apresente com o nome do bot num PR de outra pessoa passa a ser recusado, e o passo da guarda fica vermelho em vez de criar a tag em silêncio. A contagem de fragmentos apagados também passou a pedir `--find-renames`, para que renomear um fragmento não seja lido como fragmento consumido. Nada muda na operação de quem já roda o DeskcommCRM numa VPS.
+- **A guarda da release confere a identidade do PR de origem, e não o nome do autor do commit** O passo que decide se um push para a `main` corta tag de release conferia o NOME de autor do commit — campo de texto que quem commita escolhe, e que era um literal dentro do próprio `release.yml`. Agora ele pergunta à API do GitHub quem abriu o PR de origem daquele merge, e só corta a tag quando o PR foi aberto pelo bot do App da release ou quando o head do PR é um branch `release/*` do repositório de cima, que é o caminho por onde um corte legítimo passa. Um commit que se apresente com o nome do bot num PR de outra pessoa passa a ser recusado, e o passo da guarda fica vermelho em vez de criar a tag em silêncio. A contagem de fragmentos apagados também passou a pedir `--find-renames`, para que renomear um fragmento não seja lido como fragmento consumido. Nada muda na operação de quem já roda o WConnect numa VPS.
 
 - **Repetir a mesma criação pela API não cria o registro duas vezes** Quem integra com a API e manda o cabeçalho `Idempotency-Key` ao criar um modelo de mensagem (`POST /api/v1/message-templates`) tinha duas falhas. Repetir o mesmo pedido devolvia 409 `idempotency_conflict` em vez da resposta gravada, porque o resumo do pedido era gravado num formato que a comparação nunca reconhecia. E dois pedidos iguais chegando ao MESMO tempo criavam o modelo duas vezes. Agora a chave é reservada antes da criação: a repetição devolve a resposta original, e o pedido simultâneo recebe 409 `idempotency_in_progress`, que pode ser repetido em instantes. Se a criação falhar, a chave é liberada na hora e a nova tentativa executa normalmente.
 
@@ -3988,7 +3988,7 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
 
 - **Instalador volta a pedir consentimento antes de ligar a telemetria** O template self-host não pré-define mais `SENTRY_DSN` vazio antes da primeira execução. Assim, o instalador volta a perguntar pelo envio de relatórios de erro; em modo `--yes`, mantém a telemetria desligada, e uma escolha anterior continua preservada nas reexecuções. Crédito: @joaopaulomirandamatias.
 
-- **O kit explica quando a VPS usa uma arquitetura sem imagem publicada** Instalação e atualização agora recusam ARM64/aarch64 antes de consultar ou baixar as imagens do DeskcommCRM, explicando que as imagens oficiais atuais são `linux/amd64` e orientando usar uma VPS x86_64/amd64. Crédito: @joaopaulomirandamatias.
+- **O kit explica quando a VPS usa uma arquitetura sem imagem publicada** Instalação e atualização agora recusam ARM64/aarch64 antes de consultar ou baixar as imagens do WConnect, explicando que as imagens oficiais atuais são `linux/amd64` e orientando usar uma VPS x86_64/amd64. Crédito: @joaopaulomirandamatias.
 
 - **O funil passa a falar a moeda que a empresa escolheu, em vez de real sempre** Em Configurações › Organização dá para escolher a moeda da empresa, e o funil
   ignorava a escolha em dois pontos. O total no topo de cada coluna do quadro
@@ -4307,7 +4307,7 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
 
 - **O editor do agente diz na tela por que o Publicar está desabilitado** No editor do agente, o motivo de o botão Publicar estar desabilitado existia só no `title` do botão: aparecia com o ponteiro parado em cima dele. Em celular e tablet não existe hover, e um botão desabilitado não recebe foco do teclado — quem mais precisava da explicação era exatamente quem não a recebia. Agora o motivo aparece como texto na própria tela, logo abaixo do cabeçalho do editor, e o botão aponta para ele por `aria-describedby`, então o leitor de tela anuncia a explicação junto do rótulo. As frases do motivo não mudaram e continuam traduzidas em espanhol. Nada muda na sua VPS: nenhuma migration, nenhuma variável, nenhum comando. Crédito: @webtecnica.
 
-- **Campos de lista fechada voltam a aceitar mais de uma opção** No editor de campos do funil, em Configurações, digitar a vírgula entre as opções de um campo de seleção apagava o separador e colava a palavra seguinte na anterior — na prática só dava para salvar uma opção. Agora a lista aceita quantas opções você digitar. Crédito: @deskcommopp4s-cmd.
+- **Campos de lista fechada voltam a aceitar mais de uma opção** No editor de campos do funil, em Configurações, digitar a vírgula entre as opções de um campo de seleção apagava o separador e colava a palavra seguinte na anterior — na prática só dava para salvar uma opção. Agora a lista aceita quantas opções você digitar. Crédito: @wconnectopp4s-cmd.
 
 - **A recusa do Google passa a dizer o que aconteceu** Quando o Google recusava uma alteração da Agenda, o erro gravado no compromisso dizia apenas "Google HTTP 400". O Google já tinha dito o motivo na resposta (`invalid`, `insufficientPermissions`, `rateLimitExceeded`…), mas ele era descartado antes de virar a frase. Agora a frase diz o tipo da recusa (sem permissão no calendário, limite de uso do Google, evento que não existe mais, recusa que repetir não resolve), o código HTTP e o motivo que o Google mandou — por exemplo: "o Google recusou e repetir não muda o resultado — HTTP 400 (invalid)".
 
@@ -4481,7 +4481,7 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
 
   Quem pode arquivar é quem já podia encerrar: atendente para cima. O que passa a ficar registrado é o motivo da mudança: arquivar deixa o evento próprio `conversation.archived` na auditoria, em vez de se confundir com "devolvida" ou com o fechamento do atendimento. Fechar continua sendo fechar, e o número da aba "Fechadas" passa a contar só as fechadas — antes ele somava as arquivadas e mostrava mais do que a lista.
 
-- **Os guias do assistente passam a funcionar em qualquer pasta, e dois deixam de ser descartados** Um comando só (`curl -fsSL https://raw.githubusercontent.com/melgarafael/DeskcommCRM/main/scripts/instalar-guias.sh | bash`) liga os guias `deskcomm-instalar`, `deskcomm-cliente-novo`, `deskcomm-metricas`, `deskcomm-prompt`, `deskcomm-contribuir` e `deskcomm-doutrina` nas pastas globais do Claude Code, Codex, Cursor, OpenCode e Antigravity — antes eles só existiam com o assistente aberto dentro de um clone atualizado, o que deixava de fora justamente quem ainda não instalou. Pedir o assunto em português aciona o guia em qualquer um deles. Os guias não se atualizam sozinhos: rodar o comando de novo traz a versão nova, e `curl -fsSL https://raw.githubusercontent.com/melgarafael/DeskcommCRM/main/scripts/instalar-guias.sh | bash -s -- --remover` desfaz. O cabeçalho de dois guias trazia um erro de formato que assistentes mais rigorosos descartavam sem avisar, e foi corrigido.
+- **Os guias do assistente passam a funcionar em qualquer pasta, e dois deixam de ser descartados** Um comando só (`curl -fsSL https://raw.githubusercontent.com/Masukulmiguel/wconnect/main/scripts/instalar-guias.sh | bash`) liga os guias `wconnect-instalar`, `wconnect-cliente-novo`, `wconnect-metricas`, `wconnect-prompt`, `wconnect-contribuir` e `wconnect-doutrina` nas pastas globais do Claude Code, Codex, Cursor, OpenCode e Antigravity — antes eles só existiam com o assistente aberto dentro de um clone atualizado, o que deixava de fora justamente quem ainda não instalou. Pedir o assunto em português aciona o guia em qualquer um deles. Os guias não se atualizam sozinhos: rodar o comando de novo traz a versão nova, e `curl -fsSL https://raw.githubusercontent.com/Masukulmiguel/wconnect/main/scripts/instalar-guias.sh | bash -s -- --remover` desfaz. O cabeçalho de dois guias trazia um erro de formato que assistentes mais rigorosos descartavam sem avisar, e foi corrigido.
 
 - **Quem ainda não tem conta já vê login, cadastro, convite e páginas legais em espanhol** O idioma da interface sempre dependeu de uma sessão: `preferência da pessoa → idioma da
   organização → padrão`. Fora dessa cadeia — login, cadastro, aceite de convite, política de
@@ -4511,7 +4511,7 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
 
 - **O domínio de quem manda o PR não viaja mais dentro da imagem** Nada muda na sua VPS: nenhum endereço de terceiro foi encontrado no código que
   embarca hoje, e nada foi trocado em produção. O que muda é o portão do
-  repositório. A catraca que já barrava o nome antigo do produto — "DeskcommCRM"
+  repositório. A catraca que já barrava o nome antigo do produto — "WConnect"
   escrito na tela de quem instalou com a marca dele — passou a barrar também
   domínio de terceiro: site pessoal, endereço de teste ou visão de alguém
   enterrado numa parte do código que vai para a imagem. Quando isso acontece, o PR
@@ -5978,7 +5978,7 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
 ### Alterado
 
 - **A marca do produto ganha símbolo e logotipo** Instalação que não configurou marca própria passa a mostrar o logotipo do
-  Deskcomm no menu lateral, na tela de entrada e no ícone da aba do navegador —
+  WConnect no menu lateral, na tela de entrada e no ícone da aba do navegador —
   no lugar do nome em texto e da letra "D" sobre a cor de destaque. Quem já
   definiu nome ou logo próprio em Marca não vê nenhuma diferença: a marca
   configurada continua valendo em todos esses lugares.
@@ -7119,7 +7119,7 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
   **Se você já tinha instalado antes desta versão**, a próxima atualização mostra
   esse mesmo passo uma vez, com o seu domínio preenchido, e não repete depois.
 
-- **Sete alertas de segurança em bibliotecas de terceiros foram fechados** O GitHub apontava sete alertas de segurança em bibliotecas que o DeskcommCRM não
+- **Sete alertas de segurança em bibliotecas de terceiros foram fechados** O GitHub apontava sete alertas de segurança em bibliotecas que o WConnect não
   usa diretamente — elas chegam junto com outras que ele usa. São quatro em
   `fast-uri` (confusão de endereço ao normalizar uma URL malformada), dois em `qs`
   (contorno do limite de tamanho de lista e travamento por entrada preparada) e um
@@ -7301,7 +7301,7 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
   O achado é de @prevprocesso-maker, que percebeu o furo instalando o sistema para
   um cliente.
 
-- **Instalar pelo canal padrão não mistura mais versões entre os serviços** O DeskcommCRM roda três serviços que saem do mesmo código — o aplicativo, o
+- **Instalar pelo canal padrão não mistura mais versões entre os serviços** O WConnect roda três serviços que saem do mesmo código — o aplicativo, o
   trabalhador de fundo e o agendador. Quem instala pelo canal padrão espera os
   três na mesma versão.
 
@@ -8348,7 +8348,7 @@ Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual es
 
   **Você não precisa fazer nada.** A opção de Push continua podendo ser ligada dos
   dois jeitos: mesmo sem as chaves, o aviso na bandeja do sistema já funciona
-  enquanto o DeskcommCRM está aberto numa aba.
+  enquanto o WConnect está aberto numa aba.
 
 - **A Agenda passa a mostrar só a organização que está selecionada** Quem administra mais de uma empresa na mesma instalação via a Agenda somando as
   duas: os tipos de agendamento apareciam repetidos, e clicar em metade deles
@@ -9165,7 +9165,7 @@ servidor continuaria onde está. A segunda execução fixa tudo na mesma versão
 Para saber em que pé você está, sem mexer em nada:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/melgarafael/DeskcommCRM/main/hostgator-setup-kit/diagnostico.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Masukulmiguel/wconnect/main/hostgator-setup-kit/diagnostico.sh | bash
 ```
 
 Ele só lê e explica — não escreve, não reinicia, não atualiza. Se disser que está afetada,
@@ -9176,7 +9176,7 @@ novas têm valor padrão e o próprio `update.sh` as acrescenta.
 
 ## [1.2.1] — 2026-08-12
 
-**Versão de segurança. Se você roda o DeskcommCRM numa VPS, atualize.**
+**Versão de segurança. Se você roda o WConnect numa VPS, atualize.**
 
 Um usuário da comunidade auditou o código e mandou um relatório. Parte do que ele apontou já
 tinha sido corrigida nas versões seguintes à que ele analisou — mas **seis** problemas estavam
@@ -9384,7 +9384,7 @@ Depois disso, nunca mais é preciso o terminal.
 
 ## [1.0.0] — 2026-07-27
 
-Primeira versão marcada do DeskcommCRM. O projeto vinha sendo desenvolvido publicamente desde abril de 2026 sem tags; esta release estabelece o ponto a partir do qual toda mudança passa a ser versionada e descrita — porque quem hospeda o próprio sistema precisa saber o que muda antes de atualizar.
+Primeira versão marcada do WConnect. O projeto vinha sendo desenvolvido publicamente desde abril de 2026 sem tags; esta release estabelece o ponto a partir do qual toda mudança passa a ser versionada e descrita — porque quem hospeda o próprio sistema precisa saber o que muda antes de atualizar.
 
 ### Plataforma
 
@@ -9439,7 +9439,7 @@ Primeira versão marcada do DeskcommCRM. O projeto vinha sendo desenvolvido publ
 - `hostgator-setup-kit`: instalação completa (app + WAHA + banco) com um comando.
 - `baseline.sql` idempotente e auto-curativo — atualização não quebra clone com dados legados.
 - 8 scripts de operação: `install`, `update`, `backup`, `restore`, `reset-password`, `reset-mfa`, `healthcheck` e o assistente de instalação em IA.
-- Imagem publicada em `ghcr.io/melgarafael/deskcommcrm` — a VPS não compila nada.
+- Imagem publicada em `ghcr.io/masukulmiguel/wconnect` — a VPS não compila nada.
 
 ### Qualidade
 
@@ -9451,88 +9451,88 @@ Primeira versão marcada do DeskcommCRM. O projeto vinha sendo desenvolvido publ
 
 - **Node 22 é obrigatório para desenvolvimento.** A suíte de invariantes instancia o cliente do Supabase, que exige o `WebSocket` global — nativo apenas a partir do Node 22. Isso não afeta quem apenas hospeda: a VPS roda a imagem pronta.
 
-[Não lançado]: https://github.com/melgarafael/DeskcommCRM/compare/v1.63.3...HEAD
-[1.63.3]: https://github.com/melgarafael/DeskcommCRM/compare/v1.63.2...v1.63.3
-[1.63.2]: https://github.com/melgarafael/DeskcommCRM/compare/v1.63.1...v1.63.2
-[1.63.1]: https://github.com/melgarafael/DeskcommCRM/compare/v1.63.0...v1.63.1
-[1.63.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.62.0...v1.63.0
-[1.62.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.61.0...v1.62.0
-[1.61.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.60.0...v1.61.0
-[1.60.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.59.0...v1.60.0
-[1.59.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.58.1...v1.59.0
-[1.58.1]: https://github.com/melgarafael/DeskcommCRM/compare/v1.58.0...v1.58.1
-[1.58.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.57.0...v1.58.0
-[1.57.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.56.1...v1.57.0
-[1.56.1]: https://github.com/melgarafael/DeskcommCRM/compare/v1.56.0...v1.56.1
-[1.56.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.55.0...v1.56.0
-[1.55.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.54.0...v1.55.0
-[1.54.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.53.0...v1.54.0
-[1.53.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.52.0...v1.53.0
-[1.52.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.51.0...v1.52.0
-[1.51.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.50.0...v1.51.0
-[1.50.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.49.0...v1.50.0
-[1.49.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.48.0...v1.49.0
-[1.48.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.47.0...v1.48.0
-[1.47.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.46.0...v1.47.0
-[1.46.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.45.0...v1.46.0
-[1.45.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.44.0...v1.45.0
-[1.44.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.43.0...v1.44.0
-[1.43.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.42.0...v1.43.0
-[1.42.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.41.0...v1.42.0
-[1.41.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.40.0...v1.41.0
-[1.40.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.39.0...v1.40.0
-[1.39.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.38.0...v1.39.0
-[1.38.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.37.0...v1.38.0
-[1.37.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.36.0...v1.37.0
-[1.36.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.35.1...v1.36.0
-[1.35.1]: https://github.com/melgarafael/DeskcommCRM/compare/v1.35.0...v1.35.1
-[1.35.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.34.0...v1.35.0
-[1.34.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.33.0...v1.34.0
-[1.33.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.32.1...v1.33.0
-[1.32.1]: https://github.com/melgarafael/DeskcommCRM/compare/v1.32.0...v1.32.1
-[1.32.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.31.1...v1.32.0
-[1.31.1]: https://github.com/melgarafael/DeskcommCRM/compare/v1.31.0...v1.31.1
-[1.31.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.30.0...v1.31.0
-[1.30.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.29.0...v1.30.0
-[1.29.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.28.0...v1.29.0
-[1.28.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.27.3...v1.28.0
-[1.27.3]: https://github.com/melgarafael/DeskcommCRM/compare/v1.27.2...v1.27.3
-[1.27.2]: https://github.com/melgarafael/DeskcommCRM/compare/v1.27.1...v1.27.2
-[1.27.1]: https://github.com/melgarafael/DeskcommCRM/compare/v1.27.0...v1.27.1
-[1.27.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.26.0...v1.27.0
-[1.26.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.25.1...v1.26.0
-[1.25.1]: https://github.com/melgarafael/DeskcommCRM/compare/v1.25.0...v1.25.1
-[1.25.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.24.0...v1.25.0
-[1.24.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.23.0...v1.24.0
-[1.23.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.22.0...v1.23.0
-[1.22.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.21.0...v1.22.0
-[1.21.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.20.0...v1.21.0
-[1.20.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.19.0...v1.20.0
-[1.19.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.18.1...v1.19.0
-[1.18.1]: https://github.com/melgarafael/DeskcommCRM/compare/v1.18.0...v1.18.1
-[1.18.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.17.0...v1.18.0
-[1.17.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.16.1...v1.17.0
-[1.16.1]: https://github.com/melgarafael/DeskcommCRM/compare/v1.16.0...v1.16.1
-[1.16.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.15.1...v1.16.0
-[1.15.1]: https://github.com/melgarafael/DeskcommCRM/compare/v1.15.0...v1.15.1
-[1.15.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.14.0...v1.15.0
-[1.14.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.13.0...v1.14.0
-[1.13.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.12.0...v1.13.0
-[1.12.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.11.0...v1.12.0
-[1.11.1]: https://github.com/melgarafael/DeskcommCRM/compare/v1.11.0...v1.12.0
-[1.11.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.10.2...v1.11.0
-[1.10.2]: https://github.com/melgarafael/DeskcommCRM/compare/v1.10.1...v1.10.2
-[1.10.1]: https://github.com/melgarafael/DeskcommCRM/compare/v1.10.0...v1.10.1
-[1.10.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.9.1...v1.10.0
-[1.9.1]: https://github.com/melgarafael/DeskcommCRM/compare/v1.9.0...v1.9.1
-[1.9.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.8.0...v1.9.0
-[1.8.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.7.0...v1.8.0
-[1.7.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.6.0...v1.7.0
-[1.5.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.4.1...v1.5.0
-[1.4.1]: https://github.com/melgarafael/DeskcommCRM/compare/v1.4.0...v1.4.1
-[1.4.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.3.0...v1.4.0
-[1.3.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.2.1...v1.3.0
-[1.2.1]: https://github.com/melgarafael/DeskcommCRM/compare/v1.2.0...v1.2.1
-[1.2.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.1.0...v1.2.0
-[1.1.0]: https://github.com/melgarafael/DeskcommCRM/compare/v1.0.0...v1.1.0
-[1.0.0]: https://github.com/melgarafael/DeskcommCRM/releases/tag/v1.0.0
+[Não lançado]: https://github.com/Masukulmiguel/wconnect/compare/v1.63.3...HEAD
+[1.63.3]: https://github.com/Masukulmiguel/wconnect/compare/v1.63.2...v1.63.3
+[1.63.2]: https://github.com/Masukulmiguel/wconnect/compare/v1.63.1...v1.63.2
+[1.63.1]: https://github.com/Masukulmiguel/wconnect/compare/v1.63.0...v1.63.1
+[1.63.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.62.0...v1.63.0
+[1.62.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.61.0...v1.62.0
+[1.61.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.60.0...v1.61.0
+[1.60.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.59.0...v1.60.0
+[1.59.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.58.1...v1.59.0
+[1.58.1]: https://github.com/Masukulmiguel/wconnect/compare/v1.58.0...v1.58.1
+[1.58.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.57.0...v1.58.0
+[1.57.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.56.1...v1.57.0
+[1.56.1]: https://github.com/Masukulmiguel/wconnect/compare/v1.56.0...v1.56.1
+[1.56.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.55.0...v1.56.0
+[1.55.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.54.0...v1.55.0
+[1.54.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.53.0...v1.54.0
+[1.53.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.52.0...v1.53.0
+[1.52.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.51.0...v1.52.0
+[1.51.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.50.0...v1.51.0
+[1.50.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.49.0...v1.50.0
+[1.49.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.48.0...v1.49.0
+[1.48.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.47.0...v1.48.0
+[1.47.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.46.0...v1.47.0
+[1.46.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.45.0...v1.46.0
+[1.45.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.44.0...v1.45.0
+[1.44.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.43.0...v1.44.0
+[1.43.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.42.0...v1.43.0
+[1.42.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.41.0...v1.42.0
+[1.41.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.40.0...v1.41.0
+[1.40.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.39.0...v1.40.0
+[1.39.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.38.0...v1.39.0
+[1.38.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.37.0...v1.38.0
+[1.37.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.36.0...v1.37.0
+[1.36.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.35.1...v1.36.0
+[1.35.1]: https://github.com/Masukulmiguel/wconnect/compare/v1.35.0...v1.35.1
+[1.35.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.34.0...v1.35.0
+[1.34.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.33.0...v1.34.0
+[1.33.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.32.1...v1.33.0
+[1.32.1]: https://github.com/Masukulmiguel/wconnect/compare/v1.32.0...v1.32.1
+[1.32.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.31.1...v1.32.0
+[1.31.1]: https://github.com/Masukulmiguel/wconnect/compare/v1.31.0...v1.31.1
+[1.31.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.30.0...v1.31.0
+[1.30.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.29.0...v1.30.0
+[1.29.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.28.0...v1.29.0
+[1.28.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.27.3...v1.28.0
+[1.27.3]: https://github.com/Masukulmiguel/wconnect/compare/v1.27.2...v1.27.3
+[1.27.2]: https://github.com/Masukulmiguel/wconnect/compare/v1.27.1...v1.27.2
+[1.27.1]: https://github.com/Masukulmiguel/wconnect/compare/v1.27.0...v1.27.1
+[1.27.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.26.0...v1.27.0
+[1.26.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.25.1...v1.26.0
+[1.25.1]: https://github.com/Masukulmiguel/wconnect/compare/v1.25.0...v1.25.1
+[1.25.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.24.0...v1.25.0
+[1.24.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.23.0...v1.24.0
+[1.23.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.22.0...v1.23.0
+[1.22.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.21.0...v1.22.0
+[1.21.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.20.0...v1.21.0
+[1.20.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.19.0...v1.20.0
+[1.19.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.18.1...v1.19.0
+[1.18.1]: https://github.com/Masukulmiguel/wconnect/compare/v1.18.0...v1.18.1
+[1.18.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.17.0...v1.18.0
+[1.17.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.16.1...v1.17.0
+[1.16.1]: https://github.com/Masukulmiguel/wconnect/compare/v1.16.0...v1.16.1
+[1.16.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.15.1...v1.16.0
+[1.15.1]: https://github.com/Masukulmiguel/wconnect/compare/v1.15.0...v1.15.1
+[1.15.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.14.0...v1.15.0
+[1.14.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.13.0...v1.14.0
+[1.13.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.12.0...v1.13.0
+[1.12.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.11.0...v1.12.0
+[1.11.1]: https://github.com/Masukulmiguel/wconnect/compare/v1.11.0...v1.12.0
+[1.11.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.10.2...v1.11.0
+[1.10.2]: https://github.com/Masukulmiguel/wconnect/compare/v1.10.1...v1.10.2
+[1.10.1]: https://github.com/Masukulmiguel/wconnect/compare/v1.10.0...v1.10.1
+[1.10.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.9.1...v1.10.0
+[1.9.1]: https://github.com/Masukulmiguel/wconnect/compare/v1.9.0...v1.9.1
+[1.9.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.8.0...v1.9.0
+[1.8.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.7.0...v1.8.0
+[1.7.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.6.0...v1.7.0
+[1.5.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.4.1...v1.5.0
+[1.4.1]: https://github.com/Masukulmiguel/wconnect/compare/v1.4.0...v1.4.1
+[1.4.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.3.0...v1.4.0
+[1.3.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.2.1...v1.3.0
+[1.2.1]: https://github.com/Masukulmiguel/wconnect/compare/v1.2.0...v1.2.1
+[1.2.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.1.0...v1.2.0
+[1.1.0]: https://github.com/Masukulmiguel/wconnect/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/Masukulmiguel/wconnect/releases/tag/v1.0.0

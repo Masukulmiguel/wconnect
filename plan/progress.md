@@ -170,7 +170,7 @@
   SELECT byte-idêntico ao antigo (leitura NÃO estreitada — own-scope é G4-01)
   + write agent+ (viewer read-only). Policies ALL antigas dropadas (sem OR órfão).
 - Flip da catraca: 2 it.fails GAP(G2) de gov-1-rbac viraram testes normais
-  (única mudança no arquivo; commit com DESKCOMM_GOV_INVARIANTS_EDIT=1).
+  (única mudança no arquivo; commit com WCONNECT_GOV_INVARIANTS_EDIT=1).
   Novo invariante gov-1-rbac-config-write.test.ts (positivos+negativos).
 - Auditoria de policies registrada como spec 13 §4.1; Apêndice A: 2 GAP G2 → passa.
 - gov-verifier: PASS 1ª rodada, hash-check OK. test:db install+update verdes,
@@ -296,7 +296,7 @@
 - G3 aprovada pelo dono via chat; gov/G3 mergeada em main e pushada (bff9bae);
   gov/G4 criada.
 - INB-07 aprovado → feature G4-00 (hardening SECURITY DEFINER anon) criada no
-  plano com DESKCOMM_GOV_PLAN_EDIT=1 (ca36202); agrupa INB-09.
+  plano com WCONNECT_GOV_PLAN_EDIT=1 (ca36202); agrupa INB-09.
 - INB-06b executado: banco dev (rrydmwnporysaiysiztn) reconciliado — histórico
   supabase reparado (16 versões MCP revertidas, 17 locais applied) e migrations
   0030/0032/0033 aplicadas via supabase db push --include-all. 0031 já estava.

@@ -43,8 +43,8 @@
  *
  * ═══ QUEM É QUEM ═══
  *
- * O dono do servidor é `e2e-dono@deskcomm.test` (dedicado, `platform_admins`), e
- * o admin de tenant é `e2e-admin@deskcomm.test` — a separação e o porquê estão em
+ * O dono do servidor é `e2e-dono@wconnect.test` (dedicado, `platform_admins`), e
+ * o admin de tenant é `e2e-admin@wconnect.test` — a separação e o porquê estão em
  * `tests/e2e/utils/precondicao.ts`. Os dois entram por `/login/mfa`, e a razão é o
  * CADASTRO, não o papel: `signInWithPassword.ts:93-97` desvia para o desafio
  * quando o usuário tem um fator TOTP verificado, e o seed cadastra um para cada um
@@ -627,7 +627,7 @@ async function provarTamanhosNaFachada(browser: Browser): Promise<void> {
       });
       try {
         await contexto.addInitScript(
-          (valor) => localStorage.setItem("deskcomm-theme", valor),
+          (valor) => localStorage.setItem("wconnect-theme", valor),
           tema,
         );
         const pagina = await contexto.newPage();

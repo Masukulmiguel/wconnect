@@ -1,4 +1,4 @@
-# CLAUDE.md — DeskcommCRM
+# CLAUDE.md — WConnect
 
 > Instruções pra futuras sessões Claude trabalhando neste repo. Leitura obrigatória antes de qualquer task de código.
 
@@ -14,7 +14,7 @@
 
 ## Visão (1 parágrafo)
 
-DeskcommCRM é um sistema operacional de vendas open source com agentes de IA nativos — multi-nicho (e-commerce, clínicas, imobiliárias, infoprodutos, serviços), com WhatsApp como canal primário (via WAHA). Agentes com RAG por tenant atendem, qualificam e movem o funil junto com humanos; CRM inteiro exposto via MCP. Monetização = self-host em VPS (parceria HostGator), não assinatura. Arquitetura multi-tenant com RLS desde o dia 1; LGPD nativa. Posicionamento completo: `VISION.md`.
+WConnect é um sistema operacional de vendas open source com agentes de IA nativos — multi-nicho (e-commerce, clínicas, imobiliárias, infoprodutos, serviços), com WhatsApp como canal primário (via WAHA). Agentes com RAG por tenant atendem, qualificam e movem o funil junto com humanos; CRM inteiro exposto via MCP. Monetização = self-host em VPS (parceria HostGator), não assinatura. Arquitetura multi-tenant com RLS desde o dia 1; LGPD nativa. Posicionamento completo: `VISION.md`.
 
 ---
 
@@ -500,7 +500,7 @@ Checks **obrigatórios** na branch protection da `main` (verificado na configura
 Todos os **cinco** são **obrigatórios** — medido em 2026-08-14 na branch protection:
 
 ```console
-$ gh api repos/melgarafael/DeskcommCRM/branches/main/protection --jq '.required_status_checks.contexts|join(", ")'
+$ gh api repos/Masukulmiguel/wconnect/branches/main/protection --jq '.required_status_checks.contexts|join(", ")'
 verify, build-and-size, invariants, e2e, imagens-ok
 ```
 
@@ -535,7 +535,7 @@ Ao mexer em schema, RLS, RBAC, atribuição, escopo, roteamento, follow-up, webh
 
 ## QA Visual com Recursos Reais — DOUTRINA (produto self-host)
 
-**O DeskcommCRM é distribuído open-source: a experiência de quem instala numa VPS É o produto.** Toda feature nova (ou fix de comportamento visível) DEVE ser provada como um **usuário leigo a usaria de verdade** — pelo frontend, num ambiente que imita a instalação fresca — antes de "pronto". Não é opcional; é critério de aceite de toda sessão que toca UI ou fluxo de usuário.
+**O WConnect é distribuído open-source: a experiência de quem instala numa VPS É o produto.** Toda feature nova (ou fix de comportamento visível) DEVE ser provada como um **usuário leigo a usaria de verdade** — pelo frontend, num ambiente que imita a instalação fresca — antes de "pronto". Não é opcional; é critério de aceite de toda sessão que toca UI ou fluxo de usuário.
 
 **O que "recurso real" significa (e o que NÃO conta):**
 - **Conta.** Prova pela tela, dirigindo o browser (Playwright), logando com conta de teste real. `curl`/chamada de API **não** provam UX — validam o backend, mas não o que o usuário vê, clica e entende. Use curl só como diagnóstico.
@@ -578,7 +578,7 @@ Processo padrão (siga sempre):
 
    ```bash
    # A POPULAÇÃO da pergunta: main do PRODUTO (o remoto que aponta para
-   # melgarafael/DeskcommCRM, com qualquer nome) + TODO PR ABERTO, inclusive de
+   # Masukulmiguel/wconnect, com qualquer nome) + TODO PR ABERTO, inclusive de
    # fork. O `ls` abaixo mede o DISCO, que responde uma pergunta menor.
    pnpm checar:colisao-de-migration   # declara o que mediu e o que não mediu
    ```
@@ -676,18 +676,18 @@ mesma tabela vale para Codex, Cursor, OpenCode e Antigravity; ver `AGENTS.md`). 
 qualquer pasta, `bash scripts/instalar-guias.sh`; editando um guia numa branch, rode com `--fonte .`
 naquele clone — no Claude Code a skill GLOBAL vence a do projeto com o mesmo nome:
 
-- `deskcomm-instalar` — instalar, atualizar ou consertar a instalação numa VPS
-- `deskcomm-cliente-novo` — configurar o CRM para um cliente ou nicho (agentes, roteadores, follow-ups, conhecimento)
-- `deskcomm-metricas` — desempenho, conversão, custo de IA, funil, relatório
-- `deskcomm-prompt` — afinar o prompt de um agente que não performa
-- `deskcomm-contribuir` — o espelho da triagem, antes do PR; fica quieto para o mantenedor
-- `deskcomm-extensao` — criar extensão em vez de PR no núcleo: régua de destino, contrato do pacote e envio
-- `deskcomm-doutrina` — as três regras que mais custam, antes de escrever código
+- `wconnect-instalar` — instalar, atualizar ou consertar a instalação numa VPS
+- `wconnect-cliente-novo` — configurar o CRM para um cliente ou nicho (agentes, roteadores, follow-ups, conhecimento)
+- `wconnect-metricas` — desempenho, conversão, custo de IA, funil, relatório
+- `wconnect-prompt` — afinar o prompt de um agente que não performa
+- `wconnect-contribuir` — o espelho da triagem, antes do PR; fica quieto para o mantenedor
+- `wconnect-extensao` — criar extensão em vez de PR no núcleo: régua de destino, contrato do pacote e envio
+- `wconnect-doutrina` — as três regras que mais custam, antes de escrever código
 
-Os guias têm página pública em [deskcomm.com.br/guias](https://www.deskcomm.com.br/guias), escrita
-à mão em `deskcomm-site/conteudo/guias.ts`: guia criado, renomeado ou com comando novo pede a mesma
+Os guias têm página pública em [wconnect.com.br/guias](https://www.wconnect.com.br/guias), escrita
+à mão em `wconnect-site/conteudo/guias.ts`: guia criado, renomeado ou com comando novo pede a mesma
 mudança lá — senão a página ensina um guia que não existe. Ela e a de changelog saem do mesmo PR do
-`deskcomm-site`; enquanto as duas não responderem 200, vale o `curl` que abre a seção "A vitrine" de
+`wconnect-site`; enquanto as duas não responderem 200, vale o `curl` que abre a seção "A vitrine" de
 [`docs/doctrine/versionamento.md`](docs/doctrine/versionamento.md), não a frase acima.
 
 - `superpowers:brainstorming` — antes de implementar feature não-trivial
@@ -749,11 +749,11 @@ Antes de declarar uma task pronta:
     presença num check obrigatório reprovaria PR de Dependabot, PR de fork, e o próprio PR
     de release, que consome os fragmentos e deixa o diretório vazio. A presença é cobrada
     aqui, e por quem revisa.
-    **Toda versão publicada aparece na página de changelog da LP** (deskcomm.com.br/changelog,
+    **Toda versão publicada aparece na página de changelog da LP** (wconnect.com.br/changelog,
     pt-BR/en/es). Ninguém escreve no site: a LP lê o `CHANGELOG.md` da `main`, e o último passo
     do corte (`release.yml`, job `cortar-tag`) reprova quando a versão não chegou. O texto do
     fragmento é, portanto, nota pública. Enquanto as três páginas não responderem 200 esse passo
-    reprova TODO corte — a vitrine vem de um PR do `deskcomm-site`, e o `curl` que diz em que
+    reprova TODO corte — a vitrine vem de um PR do `wconnect-site`, e o `curl` que diz em que
     estado ela está abre a seção. Lei: seção "A vitrine" de `versionamento.md`.
 
 18. **Se o PR muda comportamento, ele declara o destino: núcleo, extensão, ambos ou

@@ -1,9 +1,9 @@
 {
   "format_version": 1,
-  "origin": "https://extensoes.deskcomm.com.br",
+  "origin": "https://extensoes.wconnect.com.br",
   "entries": [
     {
-      "publisher": "deskcomm",
+      "publisher": "wconnect",
       "name": "carrinho-abandonado",
       "version": "1.0.0",
       "license": "MIT",
@@ -27,10 +27,10 @@
         "navigation.inbox",
         "navigation.kanban"
       ],
-      "sha256": "54e78e246a2c7a9e788cfafe4347c66e7bd38e30a5daf80c6515a177acd94174",
+      "sha256": "1d016fbd9329318065a96b87f1a0ac7e51df1bad4214358744a5d566fba66a26",
       "byte_length": 3928,
-      "publisher_label": "Deskcomm",
-      "repository": "https://github.com/melgarafael/DeskcommCRM",
+      "publisher_label": "WConnect",
+      "repository": "https://github.com/Masukulmiguel/wconnect",
       "tags": [
         "ecommerce",
         "vendas",
@@ -39,7 +39,7 @@
       "published_at": "2026-09-18"
     },
     {
-      "publisher": "deskcomm",
+      "publisher": "wconnect",
       "name": "primeira-semana",
       "version": "1.0.0",
       "license": "MIT",
@@ -63,10 +63,10 @@
         "navigation.tasks",
         "navigation.contacts"
       ],
-      "sha256": "a501e34fbeee4dbe5beaee0249f6440602edee1975638f0c4ad69480903ba4ad",
+      "sha256": "583a9935cb43f21f643919fb4c6ade38a3d1e601a99fde1ba32d307a93477a6d",
       "byte_length": 3323,
-      "publisher_label": "Deskcomm",
-      "repository": "https://github.com/melgarafael/DeskcommCRM",
+      "publisher_label": "WConnect",
+      "repository": "https://github.com/Masukulmiguel/wconnect",
       "tags": [
         "equipe",
         "treinamento"
@@ -74,7 +74,7 @@
       "published_at": "2026-09-18"
     },
     {
-      "publisher": "deskcomm",
+      "publisher": "wconnect",
       "name": "retorno-de-paciente",
       "version": "1.0.0",
       "license": "MIT",
@@ -98,10 +98,10 @@
         "navigation.inbox",
         "navigation.agenda"
       ],
-      "sha256": "fb65a77b8420899b16b059ffd954b597864df23b2f1827bcd11913e56f56cc3e",
+      "sha256": "4f749ee186f61b3359b109b4b3e3eb3f1efe3bc5bb4b637569d83568e2ebe41a",
       "byte_length": 3523,
-      "publisher_label": "Deskcomm",
-      "repository": "https://github.com/melgarafael/DeskcommCRM",
+      "publisher_label": "WConnect",
+      "repository": "https://github.com/Masukulmiguel/wconnect",
       "tags": [
         "clinica",
         "retorno",
@@ -110,5 +110,5 @@
       "published_at": "2026-09-18"
     }
   ],
-  "revision": 1
+  "revision": 2
 }

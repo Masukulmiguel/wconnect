@@ -91,7 +91,7 @@ gh api repos/<owner>/<repo>/branches/main/protection --jq '.required_status_chec
 - **Plano:** Pro ($25/mês) + add-ons conforme necessidade (compute upgrade `Small → Medium` quando p95 DB >100ms; PITR addon $100/mês opcional).
 - **Região:** `sa-east-1` (São Paulo). Mesmo provider da Vercel `gru1` minimiza RTT (~5ms).
 - **Componentes ativos:**
-  - Postgres 15 (`deskcomm-prod`)
+  - Postgres 15 (`wconnect-prod`)
   - Supabase Auth (email/password + OAuth Google opcional + MFA TOTP)
   - Supabase Realtime (postgres_changes habilitado nas tabelas listadas em §4.5)
   - Supabase Storage (buckets `whatsapp-media` privado, `lgpd-exports` privado)
@@ -127,7 +127,7 @@ gh api repos/<owner>/<repo>/branches/main/protection --jq '.required_status_chec
 
 #### Sentry (errors + performance)
 - **Plano:** Team ($26/mês) — 50k errors/mês + 100k performance units. Suficiente pro MVP.
-- **Project:** `deskcomm-app` (Next.js) + `deskcomm-mcp` (MCP server fase 2).
+- **Project:** `wconnect-app` (Next.js) + `wconnect-mcp` (MCP server fase 2).
 - **Features ativas:** Errors, Performance (tracing), Session Replay desligado no MVP (custo + LGPD), Profiling desligado.
 - **PII scrubbing** ativado server-side + `beforeSend` custom (§9.1).
 
@@ -210,8 +210,8 @@ Linux/WSL: equivalentes via `apt` ou Docker oficial. Windows nativo não é supo
 
 ### 3.2 Clone + install + .env.local
 ```bash
-git clone git@github.com:deskcomm/deskcommcrm.git
-cd deskcommcrm
+git clone git@github.com:Masukulmiguel/wconnect.git
+cd wconnect
 pnpm install                  # instala root + workspaces (app, mcp futuro)
 cp .env.example .env.local    # template versionado; .env.local é gitignored
 ```
@@ -285,7 +285,7 @@ enroll_enabled = true
 verify_enabled = true
 ```
 
-Migrations ficam em `supabase/migrations/YYYYMMDDHHMMSS_*.sql`. Seed em `supabase/seed.sql` cria 1 organization, 1 user `dev@deskcomm.local`, 1 pipeline default.
+Migrations ficam em `supabase/migrations/YYYYMMDDHHMMSS_*.sql`. Seed em `supabase/seed.sql` cria 1 organization, 1 user `dev@wconnect.local`, 1 pipeline default.
 
 ### 3.4 WAHA via docker-compose
 
@@ -294,7 +294,7 @@ Migrations ficam em `supabase/migrations/YYYYMMDDHHMMSS_*.sql`. Seed em `supabas
 services:
   waha:
     image: devlikeapro/waha-plus:latest
-    container_name: deskcomm-waha-dev
+    container_name: wconnect-waha-dev
     restart: unless-stopped
     ports:
       - "3001:3000"
@@ -339,7 +339,7 @@ docker compose down -v               # apaga volumes (logout total das sessões)
 WAHA precisa enviar webhook pra URL pública mesmo em dev. Solução padrão:
 ```bash
 ngrok config add-authtoken <token>
-ngrok http 3000 --domain=deskcomm-dev.ngrok.dev   # plano pago dá domínio fixo
+ngrok http 3000 --domain=wconnect-dev.ngrok.dev   # plano pago dá domínio fixo
 ```
 
 Domínio fixo é importante porque mudar URL de webhook a cada `ngrok` reconecta = reconfigurar todas sessões WAHA. Sem domínio fixo, usar script `scripts/dev/update-waha-webhook.sh` que pega URL atual e atualiza WAHA via API.
@@ -533,7 +533,7 @@ export default config;
 
 Estratégia:
 - **Production:** vars setadas no Dashboard Vercel scope `Production` apenas. Encryption keys reais. Tokens Nuvemshop reais.
-- **Preview:** vars setadas em scope `Preview` apontando pra projeto Supabase `deskcomm-preview` compartilhado, WAHA mock ou staging, AI Gateway com `MOCK_AI=true` por default.
+- **Preview:** vars setadas em scope `Preview` apontando pra projeto Supabase `wconnect-preview` compartilhado, WAHA mock ou staging, AI Gateway com `MOCK_AI=true` por default.
 - **Development (Vercel CLI):** `vercel env pull .env.local` puxa vars Preview pra rodar local com infra remota quando precisar.
 
 Vars NUNCA commitadas: tudo prefixado `*_KEY`, `*_SECRET`, `*_TOKEN`, `DATABASE_URL`, `*_DSN`. Pre-commit gitleaks bloqueia (§7.5).
@@ -598,12 +598,12 @@ Não usado no MVP. Rate limit fica no Upstash, feature flags ficam em `tenant_se
 
 ### 6.1 docker-compose.yml completo (produção VPS)
 
-`/srv/deskcomm/docker-compose.yml`:
+`/srv/wconnect/docker-compose.yml`:
 ```yaml
 services:
   waha:
     image: devlikeapro/waha-plus:latest
-    container_name: deskcomm-waha
+    container_name: wconnect-waha
     restart: always
     networks:
       - waha-net
@@ -652,7 +652,7 @@ services:
 
   nginx:
     image: nginx:alpine
-    container_name: deskcomm-nginx
+    container_name: wconnect-nginx
     restart: always
     networks:
       - waha-net
@@ -670,7 +670,7 @@ services:
 
   certbot:
     image: certbot/certbot:latest
-    container_name: deskcomm-certbot
+    container_name: wconnect-certbot
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
       - certbot_webroot:/var/www/certbot
@@ -717,7 +717,7 @@ SUPABASE_S3_REGION=sa-east-1
 - **`/srv/waha/media/`** → cache local antes de upload pro S3. Pode ser perdido sem impacto (WAHA refaz fetch).
 - **Owner:** `root:root`, modo `0700`. WAHA roda como UID 1000 dentro do container; map de UID via Docker user namespace (opcional, complica permissões — começar sem).
 
-Backup script `/srv/deskcomm/scripts/backup-sessions.sh`:
+Backup script `/srv/wconnect/scripts/backup-sessions.sh`:
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
@@ -725,12 +725,12 @@ TS=$(date +%Y%m%d_%H%M%S)
 BACKUP_DIR=/srv/waha/backups
 mkdir -p "$BACKUP_DIR"
 # Pause WAHA briefly pra consistência
-docker compose -f /srv/deskcomm/docker-compose.yml stop waha
+docker compose -f /srv/wconnect/docker-compose.yml stop waha
 tar czf "$BACKUP_DIR/sessions-$TS.tar.gz" -C /srv/waha sessions
-docker compose -f /srv/deskcomm/docker-compose.yml start waha
+docker compose -f /srv/wconnect/docker-compose.yml start waha
 # Upload pro Wasabi/R2
 aws s3 cp "$BACKUP_DIR/sessions-$TS.tar.gz" \
-  "s3://deskcomm-backups/waha-sessions/sessions-$TS.tar.gz" \
+  "s3://wconnect-backups/waha-sessions/sessions-$TS.tar.gz" \
   --endpoint-url=https://s3.wasabisys.com
 # Limpar locais >7d
 find "$BACKUP_DIR" -name 'sessions-*.tar.gz' -mtime +7 -delete
@@ -750,7 +750,7 @@ upstream waha_upstream {
 # HTTP → HTTPS redirect + ACME challenge
 server {
     listen 80;
-    server_name waha.deskcomm.com.br;
+    server_name waha.wconnect.com.br;
 
     location /.well-known/acme-challenge/ {
         root /var/www/certbot;
@@ -762,10 +762,10 @@ server {
 
 server {
     listen 443 ssl http2;
-    server_name waha.deskcomm.com.br;
+    server_name waha.wconnect.com.br;
 
-    ssl_certificate     /etc/letsencrypt/live/waha.deskcomm.com.br/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/waha.deskcomm.com.br/privkey.pem;
+    ssl_certificate     /etc/letsencrypt/live/waha.wconnect.com.br/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/waha.wconnect.com.br/privkey.pem;
     include             /etc/nginx/snippets/ssl-hardening.conf;
 
     # Apenas Vercel egress IPs + IPs do dev team
@@ -809,7 +809,7 @@ Bootstrap inicial certbot (1ª vez, fora do compose):
 ```bash
 docker run --rm -v /etc/letsencrypt:/etc/letsencrypt -v /var/www/certbot:/var/www/certbot \
   -p 80:80 certbot/certbot certonly --standalone \
-  -d waha.deskcomm.com.br --email ops@deskcomm.com.br --agree-tos --no-eff-email
+  -d waha.wconnect.com.br --email ops@wconnect.com.br --agree-tos --no-eff-email
 ```
 
 ### 6.4 Firewall
@@ -1056,7 +1056,7 @@ export const log = pino({
     censor: "[REDACTED]",
   },
   base: {
-    service: "deskcomm-app",
+    service: "wconnect-app",
     env: process.env.VERCEL_ENV,
     region: process.env.VERCEL_REGION,
     commit: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7),
@@ -1076,7 +1076,7 @@ Sample event:
 ```json
 {
   "level":"info","time":"2026-04-28T14:32:11.234Z",
-  "service":"deskcomm-app","env":"production","commit":"a1b2c3d",
+  "service":"wconnect-app","env":"production","commit":"a1b2c3d",
   "event":"waha.message.received",
   "tenant_id":"3f1e...","conversation_id":"...", "external_id":"...",
   "duration_ms":42,
@@ -1123,7 +1123,7 @@ Lista canônica de métricas:
 
 ### 9.4 Dashboards essenciais
 
-**Sentry Dashboard "DeskcommCRM Ops":**
+**Sentry Dashboard "WConnect Ops":**
 - Errors per hour by environment
 - p50/p95/p99 latência por endpoint top-20
 - Top issues últimos 7d
@@ -1194,13 +1194,13 @@ UptimeRobot externo (free tier) pinga `/api/v1/health` a cada 1min. Falha 2 cons
 
 | # | Sinal | Threshold | Canal | Severidade | Owner |
 |---|---|---|---|---|---|
-| A1 | Sentry novo issue (unhandled exception em prod) | 1ª ocorrência | Slack #deskcomm-alerts | warn | dev on-call |
+| A1 | Sentry novo issue (unhandled exception em prod) | 1ª ocorrência | Slack #wconnect-alerts | warn | dev on-call |
 | A2 | Sentry issue volume spike | >50 events/h | Slack + PagerDuty | crit | dev on-call |
-| A3 | WAHA session FAILED | qualquer | Slack #deskcomm-ops + email tenant | crit | DevOps |
-| A4 | WAHA session STARTING >5min | sustentado | Slack #deskcomm-ops | warn | DevOps |
-| A5 | LGPD `data_request` SLA D+5 | cron diário | Slack #deskcomm-lgpd + email DPO | warn | LGPD owner |
+| A3 | WAHA session FAILED | qualquer | Slack #wconnect-ops + email tenant | crit | DevOps |
+| A4 | WAHA session STARTING >5min | sustentado | Slack #wconnect-ops | warn | DevOps |
+| A5 | LGPD `data_request` SLA D+5 | cron diário | Slack #wconnect-lgpd + email DPO | warn | LGPD owner |
 | A6 | LGPD `data_request` SLA D+6 | cron diário | PagerDuty | crit | LGPD owner |
-| A7 | Rate limit Nuvemshop estourado | >5 429s/min | Slack #deskcomm-ops | warn | dev on-call |
+| A7 | Rate limit Nuvemshop estourado | >5 429s/min | Slack #wconnect-ops | warn | dev on-call |
 | A8 | Audit log lag (event_log unconsumed) >5min | gauge | Slack | crit | dev on-call |
 | A9 | API p95 >300ms (rolling 15min) | sustentado 30min | Slack | warn | dev on-call |
 | A10 | API p99 >2s | sustentado 15min | Slack + PagerDuty | crit | dev on-call |
@@ -1221,20 +1221,20 @@ Configuração: Sentry → Slack via integração nativa. Slack → PagerDuty vi
 
 ## 11. Runbooks
 
-> Convenção: cada runbook tem **Sintoma → Diagnóstico → Ação → Verificação → Pós-mortem**. Salvos também em `/srv/deskcomm/runbooks/` no VPS pra acesso offline.
+> Convenção: cada runbook tem **Sintoma → Diagnóstico → Ação → Verificação → Pós-mortem**. Salvos também em `/srv/wconnect/runbooks/` no VPS pra acesso offline.
 
 ### 11.1 Número WAHA banido — fluxo de troca
 
 **Sintoma.** Alerta A19 disparado. Sessão `FAILED`, logs WAHA com erro `phone_banned` ou `not_authorized`.
 
 **Diagnóstico.**
-1. Confirmar via WAHA dashboard interno (port-forward ssh) ou `docker exec deskcomm-waha curl localhost:3000/api/sessions`.
+1. Confirmar via WAHA dashboard interno (port-forward ssh) ou `docker exec wconnect-waha curl localhost:3000/api/sessions`.
 2. Validar que não é falso positivo (network glitch). Tentar reconectar via UI: se falha imediata após QR scan, é ban.
 3. Pesquisar logs últimos 7d: enviou >500 msgs/dia? campanha não-warmed? muitas STOP recebidas?
 
 **Ação.**
 1. **Imediata (<10min):** marcar `channel_sessions.status='banned'` + `is_active=false`. Trigger UI: tenant vê banner "Número fora de operação".
-2. **Comunicação:** email ao admin do tenant + Slack #deskcomm-ops com root-cause hypothesis.
+2. **Comunicação:** email ao admin do tenant + Slack #wconnect-ops com root-cause hypothesis.
 3. **Substituição:** ativar número backup pré-aquecido (todo tenant deve ter 2º número em warm-up contínuo). UI tenant: "Conectar número de backup" → re-QR no novo.
 4. **Migration de conversas:** novas mensagens vão pro novo número; histórico permanece linkado a session antiga (read-only).
 
@@ -1251,9 +1251,9 @@ Configuração: Sentry → Slack via integração nativa. Slack → PagerDuty vi
 
 **Diagnóstico.**
 ```bash
-ssh ops@waha.deskcomm.com.br
-docker logs deskcomm-waha --tail 200 | grep -i "session-{id}"
-docker exec deskcomm-waha ls /app/.sessions/{sessionId}
+ssh ops@waha.wconnect.com.br
+docker logs wconnect-waha --tail 200 | grep -i "session-{id}"
+docker exec wconnect-waha ls /app/.sessions/{sessionId}
 ```
 Geralmente: arquivo `creds.json` ou diretório `.sessions/{sessionId}` corrompido (timeout durante init).
 
@@ -1387,7 +1387,7 @@ Feature flag `READ_ONLY_MODE` em Edge Config. Quando ativada:
 Trigger: manual via super-admin. Auto-trigger desligado (risco de flap).
 
 ### 13.3 Fallback strategies adicionais
-- **WAHA banimento generalizado da conta DeskcommCRM (modelo BPO):** plano de migração pra API oficial Meta documentado no PRD-03 (Fase 2.5).
+- **WAHA banimento generalizado da conta WConnect (modelo BPO):** plano de migração pra API oficial Meta documentado no PRD-03 (Fase 2.5).
 - **Nuvemshop deprecação de webhook:** adapter pattern + assinar feed de release notes; testes de contrato no CI dão alerta.
 
 ---

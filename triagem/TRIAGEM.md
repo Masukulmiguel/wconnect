@@ -810,7 +810,7 @@ troca errada — e ele nem tem como ver a nossa fila. O `CLAUDE.md` manda "veja 
 `ls supabase/migrations/`", ele leu, e acertou contra a `main`. **O que ele não pode ver não pode
 ser cobrado dele** (passe 10).
 
-O escape `DESKCOMM_GOV_MIGRATION_EDIT=1` existe para quando você já **decidiu** qual numeração é
+O escape `WCONNECT_GOV_MIGRATION_EDIT=1` existe para quando você já **decidiu** qual numeração é
 canônica — e a decisão vai escrita no corpo do commit, não fica implícita no uso do escape.
 
 ---
@@ -1143,7 +1143,7 @@ ficam fora de propósito (sobrevivem ao fechamento do PR): o 0269 do PR aberto #
 que vivia só em `refs/remotes/origin/pr/965`, continua invisível ao hook — quem o
 pega é o `checar`, pela lista de abertos.
 
-O escape existe (`DESKCOMM_GOV_INVARIANTS_EDIT=1`, `DESKCOMM_GOV_MIGRATION_EDIT=1`) e é legítimo
+O escape existe (`WCONNECT_GOV_INVARIANTS_EDIT=1`, `WCONNECT_GOV_MIGRATION_EDIT=1`) e é legítimo
 nesses dois casos — mas **a razão vai escrita no corpo do commit, com a medição**, nunca implícita
 no uso da variável. A linha do segundo caso é a mais importante: o hook da migration **não é rede
 para renumeração**, e quem lê a mensagem dele achando que é vai renumerar contra uma régua cega.
@@ -2359,7 +2359,7 @@ Cada um destes foi cometido de verdade nesta casa, e é por isso que estão escr
     Duas defesas, e a segunda é a que pega:
 
     ```bash
-    DESKCOMM_GOV_MIGRATION_EDIT=1 git commit ...        # a variável que o hook exige
+    WCONNECT_GOV_MIGRATION_EDIT=1 git commit ...        # a variável que o hook exige
     git log --oneline -1 && git diff --stat origin/main..HEAD   # o commit EXISTE e tem o tamanho certo?
     ```
 

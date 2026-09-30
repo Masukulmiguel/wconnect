@@ -335,7 +335,7 @@ export async function criarCatalogoDeExtensoes(
   if (erroAtual) throw new Error(erroAtual.message);
   const revisaoAtual = (atual?.revision as number | undefined) ?? 0;
 
-  const diretorio = await mkdtemp(path.join(tmpdir(), "deskcomm-extensions-e2e-"));
+  const diretorio = await mkdtemp(path.join(tmpdir(), "wconnect-extensions-e2e-"));
   let servidor: Awaited<ReturnType<typeof iniciarServidor>> | undefined;
   try {
     const banco = path.join(diretorio, "catalog.sqlite");
@@ -535,7 +535,7 @@ export async function criarCatalogoDeExtensoes(
           }
         }
         ligado = false;
-        const raizPermitida = path.join(tmpdir(), "deskcomm-extensions-e2e-");
+        const raizPermitida = path.join(tmpdir(), "wconnect-extensions-e2e-");
         if (!diretorio.startsWith(raizPermitida)) {
           throw new Error("Diretório temporário inesperado; cleanup recusado.");
         }
@@ -593,7 +593,7 @@ export async function criarCatalogoDeVersoes(
   if (erroAtual) throw new Error(erroAtual.message);
   const revisaoAtual = (atual?.revision as number | undefined) ?? 0;
 
-  const diretorio = await mkdtemp(path.join(tmpdir(), "deskcomm-extensions-e2e-"));
+  const diretorio = await mkdtemp(path.join(tmpdir(), "wconnect-extensions-e2e-"));
   let servidor: Awaited<ReturnType<typeof iniciarServidor>> | undefined;
   try {
     const banco = path.join(diretorio, "catalog.sqlite");
@@ -698,7 +698,7 @@ export async function criarCatalogoDeVersoes(
         } catch (error) {
           erroDoProcesso = error;
         }
-        const raizPermitida = path.join(tmpdir(), "deskcomm-extensions-e2e-");
+        const raizPermitida = path.join(tmpdir(), "wconnect-extensions-e2e-");
         if (!diretorio.startsWith(raizPermitida)) {
           throw new Error("Diretório temporário inesperado; cleanup recusado.");
         }

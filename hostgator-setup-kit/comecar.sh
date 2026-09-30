@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# DeskcommCRM — a porta de entrada.
+# WConnect — a porta de entrada.
 #
 # Diferente do install.sh, este script roda no SEU computador (macOS, Linux ou
 # WSL), antes de existir servidor. Ele responde a única pergunta que trava quem
@@ -9,15 +9,16 @@
 #
 # Uso:
 #   bash comecar.sh
-#   curl -fsSL https://raw.githubusercontent.com/melgarafael/DeskcommCRM/main/hostgator-setup-kit/comecar.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/Masukulmiguel/wconnect/main/hostgator-setup-kit/comecar.sh | bash
 #
 set -euo pipefail
 
-REPO_URL="${REPO_URL:-https://github.com/melgarafael/DeskcommCRM.git}"
-# Link de parceria com a HostGator. Mesma URL e mesmo rótulo do README: uma
-# promessa só, num lugar só — duas redações da mesma oferta viram duas ofertas.
-VPS_URL="https://www.hostgator.com.br/52708-141-3-52.html"
-COMUNIDADE_URL="https://lp-comunidade.automatiklabs.com.br"
+REPO_URL="${REPO_URL:-https://github.com/Masukulmiguel/wconnect.git}"
+# Mesma URL e mesmo rótulo do README: uma promessa só, num lugar só — duas
+# redações da mesma oferta viram duas ofertas. Sem código de afiliado: num fork
+# o link de terceiro pagaria comissão a quem não é dono desta instalação.
+VPS_URL="https://www.hostgator.com.br/"
+COMUNIDADE_URL="https://github.com/Masukulmiguel/wconnect/issues"
 
 # ── Aparência ───────────────────────────────────────────────────────────────
 # Gêmeas das do install.sh (que por sua vez é standalone porque roda antes do
@@ -41,7 +42,7 @@ banner() {
   case "$cols" in ''|*[!0-9]*) cols=80;; esac
   printf '\n'
   if [ "$COLOR" != 1 ] || [ "$cols" -lt $((LOGO_COLS + 2)) ]; then
-    paint 1 "  DESKCOMM"
+    paint 1 "  WCONNECT"
   else
     [ -t 1 ] && printf '\033[2J\033[H'
     while IFS= read -r linha; do
@@ -134,9 +135,8 @@ mostrar_requisitos() {
        ${VPS_URL}
 
 REQ
-  c_dim "  Esse é um link de parceria: assinar por ele sai com desconto e ajuda a"
-  c_dim "  manter o projeto. O CRM é MIT e roda em qualquer servidor — se você já"
-  c_dim "  tem um, ou prefere outro provedor, funciona igual."
+  c_dim "  O CRM é MIT e roda em qualquer servidor com Docker — se você já tem um,"
+  c_dim "  ou prefere outro provedor, funciona igual."
   printf '\n'
 }
 
@@ -145,8 +145,8 @@ comando_de_instalacao() {
 
   Já dentro do servidor, cole isto:
 
-       git clone ${REPO_URL} deskcommcrm
-       cd deskcommcrm
+       git clone ${REPO_URL} wconnect
+       cd wconnect
        bash hostgator-setup-kit/install.sh
 
   O instalador cuida do resto: instala o Docker se faltar, cria o banco,

@@ -5,10 +5,10 @@
 # continua todo em português por padrão, escolhido pela pessoa na tela).
 #
 # Quem decide o idioma é `perguntar_idioma_cli` (só o install.sh a chama), e ela
-# consulta, nesta ordem: DESKCOMM_IDIOMA_CLI no ambiente, a linha guardada no
+# consulta, nesta ordem: WCONNECT_IDIOMA_CLI no ambiente, a linha guardada no
 # .env de uma execução anterior e, por último, a pergunta interativa. Este
 # arquivo NÃO lê o ambiente ao ser carregado: `update.sh` e os demais scripts o
-# recarregam DEPOIS de `load_env` (que traz DESKCOMM_IDIOMA_CLI do .env), e ler
+# recarregam DEPOIS de `load_env` (que traz WCONNECT_IDIOMA_CLI do .env), e ler
 # lá misturaria mensagens em espanhol de `_common.sh` com as em português do
 # próprio script. Sem `perguntar_idioma_cli`, o idioma é pt-BR — o original de
 # todo texto deste kit, e o que qualquer instalação existente continua vendo.
@@ -33,11 +33,11 @@ _I18N_TABELA=0
 if [ $((BASH_VERSINFO[0] * 100 + BASH_VERSINFO[1])) -ge "${I18N_BASH_MINIMO:-404}" ]; then
 _I18N_TABELA=1
 declare -A _ES=(
-  ["Este servidor usa arquitetura '{1}', mas as imagens publicadas do DeskcommCRM hoje são linux/amd64."]="Este servidor usa arquitectura '{1}', pero las imágenes publicadas de DeskcommCRM hoy son linux/amd64."
+  ["Este servidor usa arquitetura '{1}', mas as imagens publicadas do WConnect hoje são linux/amd64."]="Este servidor usa arquitectura '{1}', pero las imágenes publicadas de WConnect hoy son linux/amd64."
   ["  Use uma VPS x86_64/amd64. Repetir o download não resolve; ARM64 só será suportado quando houver imagens multi-arquitetura."]="  Usa una VPS x86_64/amd64. Repetir la descarga no soluciona nada; ARM64 solo se admitirá cuando existan imágenes multiarquitectura."
-  ["Este servidor usa arquitetura '{1}', e as imagens publicadas do DeskcommCRM são só linux/amd64."]="Este servidor usa arquitectura '{1}', y las imágenes publicadas de DeskcommCRM son solo linux/amd64."
+  ["Este servidor usa arquitetura '{1}', e as imagens publicadas do WConnect são só linux/amd64."]="Este servidor usa arquitectura '{1}', y las imágenes publicadas de WConnect son solo linux/amd64."
   ["Como esta instalação JÁ EXISTE, sigo em frente: as imagens da versão alvo serão construídas nesta própria VPS."]="Como esta instalación YA EXISTE, sigo adelante: las imágenes de la versión destino se construirán en esta misma VPS."
-  ["Leva de 15 a 25 minutos. Uma instalação NOVA nesta arquitetura precisaria de imagens multi-arquitetura, que o DeskcommCRM ainda não publica."]="Tarda de 15 a 25 minutos. Una instalación NUEVA en esta arquitectura necesitaría imágenes multiarquitectura, que DeskcommCRM todavía no publica."
+  ["Leva de 15 a 25 minutos. Uma instalação NOVA nesta arquitetura precisaria de imagens multi-arquitetura, que o WConnect ainda não publica."]="Tarda de 15 a 25 minutos. Una instalación NUEVA en esta arquitectura necesitaría imágenes multiarquitectura, que WConnect todavía no publica."
   ["  (rede '{1}' criada — é por ela que o Traefik alcança o CRM)"]="  (red '{1}' creada: por ella Traefik llega al CRM)"
   ["A rede Docker '{1}' (a do Nginx Proxy Manager) não existe.
 Rode 'docker network ls', identifique a rede do seu NPM (Settings > a que o
@@ -120,7 +120,7 @@ sin eso un contenedor de compose común no puede entrar en ella."
   ["derruba o que subiu"]="derriba lo que se levantó"
   ["começa de novo"]="empieza de nuevo"
   ["apaga o marcador desta instalação"]="borra el marcador de esta instalación"
-  ["⚠ Não consegui gravar o marcador desta instalação (arquivo .deskcomm-instalado). O CRM está no ar; numa VPS ARM a atualização pode pedir a VPS x86_64 até o marcador existir."]="⚠ No pude escribir el marcador de esta instalación (archivo .deskcomm-instalado). El CRM está en línea; en una VPS ARM la actualización puede pedir la VPS x86_64 hasta que el marcador exista."
+  ["⚠ Não consegui gravar o marcador desta instalação (arquivo .wconnect-instalado). O CRM está no ar; numa VPS ARM a atualização pode pedir a VPS x86_64 até o marcador existir."]="⚠ No pude escribir el marcador de esta instalación (archivo .wconnect-instalado). El CRM está en línea; en una VPS ARM la actualización puede pedir la VPS x86_64 hasta que el marcador exista."
   ["Se o schema chegou a ser aplicado e você quer o banco limpo de novo,"]="Si el esquema llegó a aplicarse y quieres la base de datos limpia de nuevo,"
   ["abra o Supabase > SQL Editor e rode (ATENÇÃO: apaga todos os dados):"]="abre Supabase > SQL Editor y ejecuta (ATENCIÓN: borra todos los datos):"
 
@@ -221,22 +221,22 @@ y, si de verdad es un Traefik, pon REVERSE_PROXY=traefik en el .env y vuelve a e
   ["⚠ Detectei um Traefik já rodando neste VPS (contêiner '{1}', ocupando 80/443)."]="⚠ Detecté un Traefik ya corriendo en esta VPS (contenedor '{1}', ocupando 80/443)."
   ["  Vou publicar o CRM através dele em vez de subir um proxy próprio —"]="  Voy a publicar el CRM a través de él en vez de levantar un proxy propio —"
   ["  desligar o Traefik quebraria o que a sua hospedagem instalou."]="  apagar el Traefik rompería lo que tu hosting instaló."
-  ["✖ Já existe um DeskcommCRM NO AR nesta VPS, instalado em {1}."]="✖ Ya existe un DeskcommCRM ACTIVO en esta VPS, instalado en {1}."
+  ["✖ Já existe um WConnect NO AR nesta VPS, instalado em {1}."]="✖ Ya existe un WConnect ACTIVO en esta VPS, instalado en {1}."
   ["  Esta pasta ({1}) é outra cópia do repo. As duas se chamam"]="  Esta carpeta ({1}) es otra copia del repo. Las dos se llaman"
-  ["  DeskcommCRM, então o Docker dá às duas o MESMO nome de projeto"]="  DeskcommCRM, así que Docker les da a ambas el MISMO nombre de proyecto"
+  ["  WConnect, então o Docker dá às duas o MESMO nome de projeto"]="  WConnect, así que Docker les da a ambas el MISMO nombre de proyecto"
   ["  ('{1}') — e instalar aqui recriaria os contêineres daquela."]="  ('{1}') — e instalar aquí recrearía los contenedores de aquella."
   ["  Na prática: o CRM que está no ar passaria a rodar com o .env DESTA pasta"]="  En la práctica: el CRM que está activo pasaría a correr con el .env de ESTA carpeta"
   ["  (outro banco, outras chaves), e as conexões de WhatsApp cairiam."]="  (otra base de datos, otras claves), y las conexiones de WhatsApp se caerían."
   ["  Quer atualizar o que já existe? Use aquela pasta:"]="  ¿Quieres actualizar lo que ya existe? Usa aquella carpeta:"
   ["  Quer mesmo uma SEGUNDA instalação nesta VPS? Ela precisa de nome de"]="  ¿De verdad quieres una SEGUNDA instalación en esta VPS? Necesita nombre de"
   ["  projeto e domínio próprios — ponha no .env desta pasta, antes de rodar:"]="  proyecto y dominio propios — ponlos en el .env de esta carpeta, antes de ejecutar:"
-  ["Instalação interrompida para não derrubar o DeskcommCRM que está no ar em {1}."]="Instalación interrumpida para no derribar el DeskcommCRM que está activo en {1}."
+  ["Instalação interrompida para não derrubar o WConnect que está no ar em {1}."]="Instalación interrumpida para no derribar el WConnect que está activo en {1}."
   ["✖ As portas {1} já estão ocupadas {2}."]="✖ Los puertos {1} ya están ocupados {2}."
   ["✖ A porta {1} já está ocupada {2}."]="✖ El puerto {1} ya está ocupado {2}."
   ["  O CRM precisa dessas duas portas para publicar o site com HTTPS. Subir um"]="  El CRM necesita esos dos puertos para publicar el sitio con HTTPS. Levantar un"
   ["  segundo proxy nelas não funciona: o Docker recusa e a instalação para."]="  segundo proxy en ellos no funciona: Docker lo rechaza y la instalación se detiene."
   ["  Como resolver, na ordem do mais provável:"]="  Cómo resolverlo, en orden de lo más probable:"
-  ["  1. Já é outro DeskcommCRM neste servidor? Então use aquele — entre na"]="  1. ¿Ya es otro DeskcommCRM en este servidor? Entonces usa aquel — entra en"
+  ["  1. Já é outro WConnect neste servidor? Então use aquele — entre na"]="  1. ¿Ya es otro WConnect en este servidor? Entonces usa aquel — entra en"
   ["     pasta dele e rode: bash hostgator-setup-kit/update.sh"]="     su carpeta y ejecuta: bash hostgator-setup-kit/update.sh"
   ["  2. Não usa mais o que está ocupando? Desligue e rode este instalador de novo:"]="  2. ¿Ya no usas lo que lo está ocupando? Apágalo y vuelve a ejecutar este instalador:"
   ["       docker stop {1}"]="       docker stop {1}"
@@ -522,16 +522,16 @@ t() {
   printf '%s' "$texto"
 }
 
-# Lê DESKCOMM_IDIOMA_CLI de um .env SEM executá-lo (nunca `source`): só a linha
+# Lê WCONNECT_IDIOMA_CLI de um .env SEM executá-lo (nunca `source`): só a linha
 # exata da chave e só os dois valores válidos. Devolve 1 se não achar.
 _i18n_idioma_do_env() {
   local arq="$1" linha val
   [ -f "$arq" ] || return 1
   # A ÚLTIMA ocorrência vence (é o que `load_env` faz) e um fim de linha CRLF não
   # invalida o valor.
-  linha="$(grep -E '^DESKCOMM_IDIOMA_CLI=' "$arq" 2>/dev/null | tail -n 1)" || return 1
+  linha="$(grep -E '^WCONNECT_IDIOMA_CLI=' "$arq" 2>/dev/null | tail -n 1)" || return 1
   [ -n "$linha" ] || return 1
-  val="${linha#DESKCOMM_IDIOMA_CLI=}"; val="${val%$'\r'}"
+  val="${linha#WCONNECT_IDIOMA_CLI=}"; val="${val%$'\r'}"
   val="${val#\"}"; val="${val%\"}"; val="${val#\'}"; val="${val%\'}"
   case "$val" in
     pt-BR | es) printf '%s' "$val" ;;
@@ -544,8 +544,8 @@ _i18n_idioma_do_env() {
 # perguntado; quem não pediu nada segue em português sem ruído novo.
 _i18n_avisar_bash_antigo() {
   local pediu=0
-  [ "${DESKCOMM_IDIOMA_CLI:-}" = "es" ] && pediu=1
-  [ "$(_i18n_idioma_do_env ./.env || _i18n_idioma_do_env "${REPO_DIR:-deskcommcrm}/.env" || true)" = "es" ] && pediu=1
+  [ "${WCONNECT_IDIOMA_CLI:-}" = "es" ] && pediu=1
+  [ "$(_i18n_idioma_do_env ./.env || _i18n_idioma_do_env "${REPO_DIR:-wconnect}/.env" || true)" = "es" ] && pediu=1
   if [ "${NONINTERACTIVE:-0}" != "1" ] && [ -t 0 ]; then pediu=1; fi
   [ "$pediu" = "1" ] || return 0
   printf '%s\n' "Aviso: bash ${BASH_VERSION%%[( ]*} — o espanhol exige bash 4.4 ou superior; a instalação segue em português." >&2
@@ -555,7 +555,7 @@ _i18n_avisar_bash_antigo() {
 # Decide o idioma da CLI — o primeiro passo do install.sh, antes de qualquer
 # outra saída, para o resto da instalação já nascer no idioma escolhido.
 # Ordem, e a primeira que responder vence:
-#   1. DESKCOMM_IDIOMA_CLI (pt-BR ou es) no ambiente — escolha explícita, também
+#   1. WCONNECT_IDIOMA_CLI (pt-BR ou es) no ambiente — escolha explícita, também
 #      para quem roda com --yes ou fora de terminal;
 #   2. a linha guardada no .env de uma execução anterior (o da pasta atual ou o
 #      de $REPO_DIR): a instalação NÃO pergunta de novo, e uma reexecução com
@@ -568,12 +568,12 @@ perguntar_idioma_cli() {
     IDIOMA_CLI=pt-BR
     return 0
   fi
-  case "${DESKCOMM_IDIOMA_CLI:-}" in
-    pt-BR | es) IDIOMA_CLI="$DESKCOMM_IDIOMA_CLI"; return 0 ;;
+  case "${WCONNECT_IDIOMA_CLI:-}" in
+    pt-BR | es) IDIOMA_CLI="$WCONNECT_IDIOMA_CLI"; return 0 ;;
   esac
-  salvo="$(_i18n_idioma_do_env ./.env || _i18n_idioma_do_env "${REPO_DIR:-deskcommcrm}/.env" || true)"
+  salvo="$(_i18n_idioma_do_env ./.env || _i18n_idioma_do_env "${REPO_DIR:-wconnect}/.env" || true)"
   if [ -n "$salvo" ]; then
-    IDIOMA_CLI="$salvo"; export DESKCOMM_IDIOMA_CLI="$salvo"; return 0
+    IDIOMA_CLI="$salvo"; export WCONNECT_IDIOMA_CLI="$salvo"; return 0
   fi
   [ "${NONINTERACTIVE:-0}" = "1" ] && return 0
   [ -t 0 ] || return 0
@@ -587,5 +587,5 @@ perguntar_idioma_cli() {
     2 | es | Es | ES | español | Español) IDIOMA_CLI=es ;;
     *) IDIOMA_CLI=pt-BR ;;
   esac
-  export DESKCOMM_IDIOMA_CLI="$IDIOMA_CLI"
+  export WCONNECT_IDIOMA_CLI="$IDIOMA_CLI"
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Atualiza o DeskcommCRM na VPS: código novo + banco + app — com BACKUP antes e
+# Atualiza o WConnect na VPS: código novo + banco + app — com BACKUP antes e
 # CHECAGEM DE SAÚDE depois. Um comando só, pensado pra quem não é técnico:
 #
 #   bash hostgator-setup-kit/update.sh
@@ -182,7 +182,7 @@ if [ -z "$SKIP_BACKUP" ]; then
   if bash "$KIT_DIR/backup.sh"; then
     c_grn "✓ backup feito — se algo der errado, dá pra restaurar (restore.sh)."
   else
-    if [ -n "${DESKCOMM_AGENT_REPORT:-}" ] || [ ! -t 0 ]; then
+    if [ -n "${WCONNECT_AGENT_REPORT:-}" ] || [ ! -t 0 ]; then
       die "O backup preventivo falhou. Atualização automática interrompida para proteger os dados."
     fi
     c_ylw "⚠ o backup falhou. A atualização NÃO apaga dados (só reorganiza os contatos),"
@@ -193,7 +193,7 @@ if [ -z "$SKIP_BACKUP" ]; then
 fi
 # Avisa o agente do host (se for ele quem está dirigindo) — é o que faz a tela
 # de atualização avançar passo a passo enquanto o app ainda está de pé.
-[ -n "${DESKCOMM_AGENT_REPORT:-}" ] && eval "${DESKCOMM_AGENT_REPORT_CMD}" backup
+[ -n "${WCONNECT_AGENT_REPORT:-}" ] && eval "${WCONNECT_AGENT_REPORT_CMD}" backup
 
 # ── 3. Código novo ───────────────────────────────────────────────────────────
 step "Baixando o código novo"
@@ -233,7 +233,7 @@ if [ "${SINGLE_SERVER:-0}" = "1" ]; then
   atualizar_supabase_single_server || die "O Supabase desta VPS não subiu (erro acima). NÃO mexi no banco do CRM."
 fi
 
-[ -n "${DESKCOMM_AGENT_REPORT:-}" ] && eval "${DESKCOMM_AGENT_REPORT_CMD}" codigo
+[ -n "${WCONNECT_AGENT_REPORT:-}" ] && eval "${WCONNECT_AGENT_REPORT_CMD}" codigo
 
 # ── 4. Banco: schema + correções de dados (schema ANTES do app) ──────────────
 # O baseline é idempotente e auto-curativo. Re-aplicar numa base que JÁ existe
@@ -321,7 +321,7 @@ if [ -f supabase/baseline.sql ]; then
   #
   # O segundo argumento de `reaplicar_baseline` já existe para isto e recebe
   # TODAS as passadas, cada uma com cabeçalho — melhor que a saída da última.
-  if reaplicar_baseline "$PROJECT_DIR/supabase/baseline.sql" "$PROJECT_DIR/.deskcomm-banco.log"; then
+  if reaplicar_baseline "$PROJECT_DIR/supabase/baseline.sql" "$PROJECT_DIR/.wconnect-banco.log"; then
     if [ "$BASELINE_PASSADAS" -gt 1 ]; then
       c_grn "✓ banco atualizado na passada $BASELINE_PASSADAS — as anteriores não aplicaram tudo (banco ocupado ou conexão instável; o que faltou está listado acima)."
     else
@@ -469,7 +469,7 @@ if [ -f supabase/baseline.sql ]; then
     # E não é uma segunda cópia das 92 declarações: o comando sai do PRÓPRIO
     # `baseline.sql`, recortado dele. Nada aqui sabe o que uma regra diz.
     c_ylw "⚠ Faltaram regras de isolamento. Recriando exatamente as que faltam…"
-    faltam_arq="$PROJECT_DIR/.deskcomm-regras-faltando.txt"
+    faltam_arq="$PROJECT_DIR/.wconnect-regras-faltando.txt"
     printf '%s\n' "$faltando" > "$faltam_arq"
 
     # A régua junta o comando INTEIRO — uma regra real ocupa várias linhas, e
@@ -498,7 +498,7 @@ if [ -f supabase/baseline.sql ]; then
 
     if [ -n "$recria" ]; then
       printf '%s\n' "$recria" | pg_container -i postgres:17-alpine \
-        psql "$(url_do_schema)" >> "$PROJECT_DIR/.deskcomm-banco.log" 2>&1 || true
+        psql "$(url_do_schema)" >> "$PROJECT_DIR/.wconnect-banco.log" 2>&1 || true
     fi
     rm -f "$faltam_arq"
 
@@ -515,7 +515,7 @@ if [ -f supabase/baseline.sql ]; then
     c_red "   Sem elas o banco NEGA a leitura em silêncio: telas aparecem VAZIAS,"
     c_red "   sem erro nenhum, e isso é indistinguível de 'não há dados'."
     printf '%s\n' "$faltando" | sed 's/|/ na tabela /; s/^/   • /' | head -20
-    c_ylw "   O log do banco está em .deskcomm-banco.log — mande-o para o suporte."
+    c_ylw "   O log do banco está em .wconnect-banco.log — mande-o para o suporte."
     c_ylw "   Para voltar ao estado anterior: bash restore.sh"
     # ⛔ E A ATUALIZAÇÃO PARA AQUI.
     #
@@ -557,7 +557,7 @@ fi
 # faltam e, se não conseguir, mantém o CRM parado. Sair antes dela deixaria o
 # trap subir o app sem regra — tela vazia para todo mundo.
 [ -z "$BANCO_RESTANTE" ] || die "O banco NÃO terminou limpo e os erros acima repetir não cura: a migration NÃO chegou. A atualização PARA aqui."
-[ -n "${DESKCOMM_AGENT_REPORT:-}" ] && eval "${DESKCOMM_AGENT_REPORT_CMD}" banco
+[ -n "${WCONNECT_AGENT_REPORT:-}" ] && eval "${WCONNECT_AGENT_REPORT_CMD}" banco
 
 # ── 4.5 E-mails de acesso, para quem já estava instalado ────────────────────
 # Só COM o token no ambiente, e por isso duas coisas:
@@ -581,7 +581,7 @@ fi
 # configurou à mão está certo, e ler "seus e-mails estão quebrados" numa
 # atualização que correu bem seria alarme falso na cara de quem fez tudo certo.
 AVISO_SITE_URL=""
-MARCA_AVISO_SITE_URL="$PROJECT_DIR/.deskcomm-site-url-avisado"
+MARCA_AVISO_SITE_URL="$PROJECT_DIR/.wconnect-site-url-avisado"
 if [ -n "${SUPABASE_ACCESS_TOKEN:-}" ]; then
   bash "$KIT_DIR/marca-emails.sh" --projeto "$PROJECT_DIR" || true
   : > "$MARCA_AVISO_SITE_URL" 2>/dev/null || true   # o passo automático rodou

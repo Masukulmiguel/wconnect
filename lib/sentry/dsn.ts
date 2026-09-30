@@ -1,20 +1,26 @@
 /**
- * DSN do Sentry com opt-out em runtime — modelo "telemetria de comunidade".
+ * DSN do Sentry — opt-in, sem default de rede.
  *
- * Por padrão, erros vão pro Sentry do projeto (DEFAULT_SENTRY_DSN): num open source
- * self-host, é o que dá visibilidade pra corrigir bugs que afetam todo mundo. Quem
- * hospeda controla isso pelo `.env`, SEM rebuild da imagem:
+ * Por padrão NÃO existe DSN: `resolveSentryDsn` devolve `""`, e o SDK trata valor
+ * vazio como "sem DSN" (`@sentry/core` → `client.js`: `if (options.dsn) ... else
+ * "No DSN provided, client will not send events"`), então uma instalação que não
+ * configurou nada não manda dado nenhum para lugar nenhum. Quem hospeda decide
+ * pelo `.env`, SEM rebuild da imagem:
  *
  *   SENTRY_DSN=off           → desliga toda a telemetria (nada é enviado)
  *   SENTRY_DSN=<seu-dsn>     → manda os erros pro SEU Sentry
- *   SENTRY_DSN=  (vazio)     → usa o Sentry da comunidade (padrão)
+ *   SENTRY_DSN=  (vazio)     → sem telemetria (padrão)
  *
  * Vale para servidor (process.env) e navegador (window.__PUBLIC_ENV__.SENTRY_DSN,
  * injetado em runtime pelo <PublicEnvScript/>). O DSN não é segredo — DSNs do Sentry
  * são públicos por design.
+ *
+ * Por que sem default: um DSN default embutido no código faria toda instalação
+ * self-host que não mexer na chave telemetria para um servidor que não é o dela.
+ * Em fork/white-label isso é ainda mais inequívoco — não há "Sentry da comunidade"
+ * a que este arquivo possa remeter.
  */
-export const DEFAULT_SENTRY_DSN =
-  "https://58fabf8ad54504863d404a3647ef3714@o4509908078559232.ingest.us.sentry.io/4509908083212288";
+export const DEFAULT_SENTRY_DSN = "";
 
 export function resolveSentryDsn(value: string | undefined | null): string | undefined {
   const v = (value ?? "").trim().toLowerCase() === "off" ? "off" : (value ?? "").trim();
@@ -23,13 +29,13 @@ export function resolveSentryDsn(value: string | undefined | null): string | und
 }
 
 /**
- * Estamos mandando para o Sentry da COMUNIDADE (o nosso), e não para o do operador?
+ * Estamos sem DSN do operador (o default vazio), em vez de apontar para o Sentry
+ * que ele mesmo configurou?
  *
- * Isso decide a amostragem (issue #100). No DSN da comunidade só vai ERRO:
- * `tracesSampleRate` e `replaysSessionSampleRate` vão a 0. O que ajuda a corrigir
- * "bug que afeta todo mundo" é o stack trace — não 100% das transações nem 10% das
- * sessões de um CRM que não é nosso. Quem aponta para o próprio Sentry recebe tudo,
- * porque aí o dado não sai da infraestrutura de quem é dono dele.
+ * Isso decide a amostragem (issue #100). Sem DSN do operador só vale a política
+ * restrita: `tracesSampleRate` e `replaysSessionSampleRate` vão a 0. Quem aponta
+ * para o próprio Sentry recebe tudo, porque aí o dado não sai da infraestrutura
+ * de quem é dono dele.
  */
 export function isCommunityDsn(dsn: string | undefined): boolean {
   return dsn === DEFAULT_SENTRY_DSN;

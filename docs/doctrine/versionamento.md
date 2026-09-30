@@ -198,27 +198,27 @@ E o `package.json` **não** é a fonte: ele segue em `0.1.0`, de propósito. A f
 ## A vitrine
 
 Toda versão publicada aparece na página de changelog da LP, nos três idiomas:
-[deskcomm.com.br/changelog](https://www.deskcomm.com.br/changelog),
-[/en/changelog](https://www.deskcomm.com.br/en/changelog) e
-[/es/changelog](https://www.deskcomm.com.br/es/changelog), cada versão com página própria
+[wconnect.com.br/changelog](https://www.wconnect.com.br/changelog),
+[/en/changelog](https://www.wconnect.com.br/en/changelog) e
+[/es/changelog](https://www.wconnect.com.br/es/changelog), cada versão com página própria
 (`/changelog/X.Y.Z`). É lá que quem ainda não instalou — e quem decide se atualiza — lê o que
 mudou sem abrir o GitHub.
 
 **Enquanto as três páginas não responderem 200, o parágrafo acima descreve o alvo e não o estado.**
-Elas nascem num PR do repositório `deskcomm-site`, e o corte depende delas: com a vitrine fora do
+Elas nascem num PR do repositório `wconnect-site`, e o corte depende delas: com a vitrine fora do
 ar, o passo abaixo reprova **toda** release depois de 35 tentativas, cerca de meia hora de espera. Quem for cortar confere
 antes — o comando não envelhece, a frase envelheceria:
 
 ```bash
 for p in /changelog /en/changelog /es/changelog /guias; do
-  echo "$p: $(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "https://www.deskcomm.com.br$p")"
+  echo "$p: $(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "https://www.wconnect.com.br$p")"
 done
 ```
 
 Quatro `200` e esta seção vale como está escrita. Qualquer `404` e a ordem é a inversa: a vitrine
 entra no ar primeiro, o corte depois.
 
-**Ninguém escreve release no site.** A LP (repositório `deskcomm-site`) lê o `CHANGELOG.md` da
+**Ninguém escreve release no site.** A LP (repositório `wconnect-site`) lê o `CHANGELOG.md` da
 `main` e revalida a cada 10 minutos. Então a regra de quem corta release não é "lembre de
 atualizar a LP" — regra que não protege quem a escreve —, e sim:
 
@@ -226,7 +226,7 @@ atualizar a LP" — regra que não protege quem a escreve —, e sim:
    seção que chegou à `main` de outro jeito também aparece: a LP lê o arquivo, não as Releases
    do GitHub. Foi o que salvou a v1.20.0, cuja tag foi criada à mão e nunca ganhou Release.
 2. **O cabeçalho da seção é contrato.** `## [X.Y.Z] — AAAA-MM-DD`, subseções em `###`. O leitor
-   da LP (`deskcomm-site/lib/changelog.ts`, outro repositório) usa a mesma expressão que
+   da LP (`wconnect-site/lib/changelog.ts`, outro repositório) usa a mesma expressão que
    `tests/unit/release-chega-na-lp.test.ts` cobra aqui. Mudar o formato é mudar os dois
    repositórios no mesmo movimento.
 3. **O corte confere a consequência.** O último passo do job `cortar-tag` —

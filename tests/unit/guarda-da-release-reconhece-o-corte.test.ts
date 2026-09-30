@@ -57,11 +57,11 @@ const RAIZ = process.cwd();
  * forjável. A guarda antiga procurava exatamente esta string; a nova confere a
  * identidade pelo PR de origem.
  */
-const BOT = "deskcomm-release[bot]";
+const BOT = "wconnect-release[bot]";
 
 /** O login com que a API apresenta o App — o e-mail do corte real confirma o slug. */
-const LOGIN_DO_APP = "deskcommcrm-release[bot]";
-const REPO_DE_CIMA = "melgarafael/DeskcommCRM";
+const LOGIN_DO_APP = "wconnect-release[bot]";
+const REPO_DE_CIMA = "Masukulmiguel/wconnect";
 
 /** Uma linha no formato que o `--jq` da guarda produz: cinco campos por TAB. */
 function linhaDaApi(login: string, tipo: string, ref: string, repo: string, numero: number): string {
@@ -72,15 +72,15 @@ function linhaDaApi(login: string, tipo: string, ref: string, repo: string, nume
  * As duas respostas REAIS medidas em 2026-09-18 nesta `main`, com o head
  * ajustado para os branches do repositório sintético:
  *
- *   corte do App  3a4df3cb  PR #1160  deskcommcrm-release[bot] (Bot)  head release/1.34.0 deste repositório
- *   PR de gente   d73c32cc  PR #1112  deskcommopp4s-cmd (User)       head fix/EPIC-13-… de um fork
+ *   corte do App  3a4df3cb  PR #1160  wconnect-release[bot] (Bot)  head release/1.34.0 deste repositório
+ *   PR de gente   d73c32cc  PR #1112  wconnectopp4s-cmd (User)       head fix/EPIC-13-… de um fork
  */
 const RESPOSTA_DO_APP = linhaDaApi(LOGIN_DO_APP, "Bot", "release/9.9.9", REPO_DE_CIMA, 1160);
 const RESPOSTA_DE_GENTE = linhaDaApi(
-  "deskcommopp4s-cmd",
+  "wconnectopp4s-cmd",
   "User",
   "fix/EPIC-13-credencial-editavel",
-  "deskcommopp4s-cmd/deskcomm-fixes",
+  "wconnectopp4s-cmd/wconnect-fixes",
   1112,
 );
 
@@ -207,7 +207,7 @@ function decisaoPara(sha: string, respostaDaApi: string = RESPOSTA_DO_APP): stri
         GITHUB_OUTPUT: saidaDoGithub,
         GITHUB_REPOSITORY: REPO_DE_CIMA,
         GITHUB_SHA: sha,
-        APP_SLUG: "deskcommcrm-release",
+        APP_SLUG: "wconnect-release",
       },
       stdio: ["ignore", "pipe", "pipe"],
     });
@@ -396,7 +396,7 @@ describe("a guarda recusa ALTO, e não em silêncio, quem apaga fragmento sem se
     expect(r.status, "a guarda tem de sair com 1, e não morrer por outro motivo").toBe(1);
     expect(r.saida).toMatch(/não foi aberto pelo App da release/);
     // O dado de fora do git aparece na recusa…
-    expect(r.saida).toMatch(/deskcommopp4s-cmd/);
+    expect(r.saida).toMatch(/wconnectopp4s-cmd/);
     // …e o nome de autor não aparece em lugar nenhum dela.
     expect(r.saida).not.toMatch(/Fulano de Tal/);
   });

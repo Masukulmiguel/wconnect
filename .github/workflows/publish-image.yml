@@ -12,7 +12,7 @@ name: Publicar imagem Docker (GHCR)
 # IA congelava no código do dia da instalação. Doutrina: docs/doctrine/packaging.md,
 # invariante 1.
 #
-# `deskcomm-voice-agent` (módulo de voz SIP, #677) entrou pelo MESMO motivo,
+# `wconnect-voice-agent` (módulo de voz SIP, #677) entrou pelo MESMO motivo,
 # antes mesmo de existir produção: o compose de voz nasceu com o mesmo
 # `build:` sozinho que o worker teve (hoje ele é o serviço `voice-agent`, profile
 # `telefonia`, em docker-compose.prod.yml) — publicar a imagem aqui evita repetir o
@@ -186,18 +186,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: deskcommcrm
+          - name: wconnect
             dockerfile: Dockerfile
-            title: DeskcommCRM
-          - name: deskcomm-worker
+            title: WConnect
+          - name: wconnect-worker
             dockerfile: Dockerfile.worker
-            title: DeskcommCRM worker
-          - name: deskcomm-scheduler
+            title: WConnect worker
+          - name: wconnect-scheduler
             dockerfile: Dockerfile.scheduler
-            title: DeskcommCRM scheduler
-          - name: deskcomm-voice-agent
+            title: WConnect scheduler
+          - name: wconnect-voice-agent
             dockerfile: Dockerfile.voice-agent
-            title: DeskcommCRM voice agent
+            title: WConnect voice agent
 
     steps:
       - uses: actions/checkout@v7
@@ -244,10 +244,10 @@ jobs:
             # Buildx`, antes de compilar coisa alguma, enquanto worker e
             # scheduler seguiram e moveram o ponteiro:
             #
-            #   deskcommcrm          1.12.0   404
-            #   deskcommcrm          stable   sha256:0235d02b…  ← 1.11.0
-            #   deskcomm-worker      stable   sha256:66c7bde4…  ← 1.12.0
-            #   deskcomm-scheduler   stable   sha256:ac6b87cc…  ← 1.12.0
+            #   wconnect          1.12.0   404
+            #   wconnect          stable   sha256:0235d02b…  ← 1.11.0
+            #   wconnect-worker      stable   sha256:66c7bde4…  ← 1.12.0
+            #   wconnect-scheduler   stable   sha256:ac6b87cc…  ← 1.12.0
             #
             # Quem instalasse por `stable` naquela janela recebia app 1.11.0 com
             # worker e scheduler 1.12.0. `fail-fast: true` não resolveria: quando
@@ -309,7 +309,7 @@ jobs:
     # Na `main` e em tag esta imagem vira a que o parque instala: ela se constrói
     # nas máquinas do GitHub, nunca numa máquina nossa. Guarda contra fork:
     # comentário do e2e-parte no e2e.yml.
-    runs-on: ${{ vars.EXECUTOR_PROPRIO == 'ligado' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && 'deskcomm-proprio' || 'ubuntu-latest' }}
+    runs-on: ${{ vars.EXECUTOR_PROPRIO == 'ligado' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && 'wconnect-proprio' || 'ubuntu-latest' }}
     concurrency:
       group: ${{ github.workflow }}-imagem-do-app-sobe-${{ github.event.pull_request.number || github.ref }}${{ github.event_name == 'pull_request' && github.run_attempt != '1' && format('-reentrada-{0}', github.event.pull_request.head.sha) || '' }}
       cancel-in-progress: ${{ github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
@@ -329,16 +329,16 @@ jobs:
           platforms: linux/amd64
           push: false
           load: true
-          tags: deskcomm-smoke:pr
+          tags: wconnect-smoke:pr
           build-args: |
             APP_VERSION=smoke
           # Mesmo escopo de cache do build-and-push: as camadas são idênticas,
           # então na prática este job reaproveita aquele build em vez de repeti-lo.
-          cache-from: type=gha,scope=deskcommcrm
+          cache-from: type=gha,scope=wconnect
           # Em PR o build-and-push não roda, então quem grava o cache do PR é
           # este job — sem isto o segundo push do mesmo PR reconstruiria do
           # zero. Fora de PR continua só lendo: quem grava é o build-and-push.
-          cache-to: ${{ github.event_name == 'pull_request' && 'type=gha,mode=max,scope=deskcommcrm' || '' }}
+          cache-to: ${{ github.event_name == 'pull_request' && 'type=gha,mode=max,scope=wconnect' || '' }}
 
       - name: O container chega a servir?
         run: |
@@ -349,7 +349,7 @@ jobs:
             -e SUPABASE_SERVICE_ROLE_KEY=chave-de-mentira \
             -e SUPABASE_DB_URL=postgres://u:p@127.0.0.1:5432/postgres \
             -e SENTRY_DSN=off \
-            deskcomm-smoke:pr
+            wconnect-smoke:pr
 
           # Espera o boot; falha rápido se o processo morreu (crashloop).
           pronto=nao
@@ -404,8 +404,8 @@ jobs:
           docker run --rm \
             -v "$PWD/tests/fixtures/sample-text.pdf:/fixture.pdf:ro" \
             -v "$PWD/scripts/sonda-pdf-na-imagem.mjs:/sonda-pdf-na-imagem.mjs:ro" \
-            -e PDF_ESPERADO="DeskcommCRM RAG fixture" \
-            deskcomm-smoke:pr node /sonda-pdf-na-imagem.mjs
+            -e PDF_ESPERADO="WConnect RAG fixture" \
+            wconnect-smoke:pr node /sonda-pdf-na-imagem.mjs
 
       - name: Encerrar
         if: always()
@@ -419,10 +419,10 @@ jobs:
   # #488), com sonda de DIGEST — a ingênua ("a tag `stable` existe?") devolve 200
   # nas três e não prova nada, porque `stable` existe desde a 1.11.0:
   #
-  #   deskcommcrm          1.12.0   404
-  #   deskcommcrm          stable   sha256:0235d02b…   <- 1.11.0
-  #   deskcomm-worker      stable   sha256:66c7bde4…   <- 1.12.0
-  #   deskcomm-scheduler   stable   sha256:ac6b87cc…   <- 1.12.0
+  #   wconnect          1.12.0   404
+  #   wconnect          stable   sha256:0235d02b…   <- 1.11.0
+  #   wconnect-worker      stable   sha256:66c7bde4…   <- 1.12.0
+  #   wconnect-scheduler   stable   sha256:ac6b87cc…   <- 1.12.0
   #
   # Quem instalasse por `stable` naquela janela recebia app 1.11.0 com worker e
   # scheduler 1.12.0. Os três saem do mesmo repositório e compartilham código;
@@ -476,7 +476,7 @@ jobs:
           # canal deixaria de ser o mesmo manifesto que a versão.
           dono=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
           numero="${VERSAO#v}"
-          for img in deskcommcrm deskcomm-worker deskcomm-scheduler deskcomm-voice-agent; do
+          for img in wconnect wconnect-worker wconnect-scheduler wconnect-voice-agent; do
             echo "::group::${img}"
             docker buildx imagetools create \
               --tag "${REGISTRY}/${dono}/${img}:stable" \
@@ -487,8 +487,8 @@ jobs:
 
   # As imagens de FUNDO sobem — e o laço do event_log CARREGA? (issue #604)
   #
-  # `imagem-do-app-sobe` prova a imagem do app. As imagens `deskcomm-worker`
-  # (Dockerfile.worker) e `deskcomm-scheduler` (Dockerfile.scheduler) eram
+  # `imagem-do-app-sobe` prova a imagem do app. As imagens `wconnect-worker`
+  # (Dockerfile.worker) e `wconnect-scheduler` (Dockerfile.scheduler) eram
   # construídas em `build-and-push` e publicadas sem que NINGUÉM as executasse
   # antes: o defeito da #648 — um `import` que estoura só sob `tsx`, o
   # `event_log` parado dez dias e o `/healthz` verde — atravessava build, push,
@@ -526,7 +526,7 @@ jobs:
     # Na `main` e em tag esta imagem vira a que o parque instala: ela se constrói
     # nas máquinas do GitHub, nunca numa máquina nossa. Guarda contra fork:
     # comentário do e2e-parte no e2e.yml.
-    runs-on: ${{ vars.EXECUTOR_PROPRIO == 'ligado' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && 'deskcomm-proprio' || 'ubuntu-latest' }}
+    runs-on: ${{ vars.EXECUTOR_PROPRIO == 'ligado' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && 'wconnect-proprio' || 'ubuntu-latest' }}
     concurrency:
       group: ${{ github.workflow }}-imagens-de-fundo-sobem-${{ github.event.pull_request.number || github.ref }}${{ github.event_name == 'pull_request' && github.run_attempt != '1' && format('-reentrada-{0}', github.event.pull_request.head.sha) || '' }}
       cancel-in-progress: ${{ github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
@@ -549,15 +549,15 @@ jobs:
           platforms: linux/amd64
           push: false
           load: true
-          tags: deskcomm-worker:pr
+          tags: wconnect-worker:pr
           # Mesmo escopo de cache do build-and-push, por imagem. Os dois jobs
           # correm em PARALELO, então o cache costuma estar frio no primeiro run
           # de um push e quente nos seguintes — "reaproveita aquele build" só
           # vale a partir do segundo. Medido em 16/09/2026 no primeiro run deste
           # gate: manifesto importado, camadas reconstruídas.
-          cache-from: type=gha,scope=deskcommcrm-worker
+          cache-from: type=gha,scope=wconnect-worker
           # Mesma razão do job do app: em PR, quem grava o cache é este job.
-          cache-to: ${{ github.event_name == 'pull_request' && 'type=gha,mode=max,scope=deskcommcrm-worker' || '' }}
+          cache-to: ${{ github.event_name == 'pull_request' && 'type=gha,mode=max,scope=wconnect-worker' || '' }}
 
       - name: Build local da imagem do scheduler (sem push)
         uses: docker/build-push-action@v7
@@ -567,9 +567,9 @@ jobs:
           platforms: linux/amd64
           push: false
           load: true
-          tags: deskcomm-scheduler:pr
-          cache-from: type=gha,scope=deskcommcrm-scheduler
-          cache-to: ${{ github.event_name == 'pull_request' && 'type=gha,mode=max,scope=deskcommcrm-scheduler' || '' }}
+          tags: wconnect-scheduler:pr
+          cache-from: type=gha,scope=wconnect-scheduler
+          cache-to: ${{ github.event_name == 'pull_request' && 'type=gha,mode=max,scope=wconnect-scheduler' || '' }}
 
       # A QUARTA imagem (módulo opcional de telefonia, #677). Ela entrou na
       # `main` sem nunca ter sido construída: `build-and-push` tem a matriz com
@@ -587,9 +587,9 @@ jobs:
           platforms: linux/amd64
           push: false
           load: true
-          tags: deskcomm-voice-agent:pr
-          cache-from: type=gha,scope=deskcommcrm-voice-agent
-          cache-to: ${{ github.event_name == 'pull_request' && 'type=gha,mode=max,scope=deskcommcrm-voice-agent' || '' }}
+          tags: wconnect-voice-agent:pr
+          cache-from: type=gha,scope=wconnect-voice-agent
+          cache-to: ${{ github.event_name == 'pull_request' && 'type=gha,mode=max,scope=wconnect-voice-agent' || '' }}
 
       - name: O laço do event_log CARREGA dentro da imagem do worker?
         run: |
@@ -606,7 +606,7 @@ jobs:
             -e NEXT_PUBLIC_SUPABASE_ANON_KEY=chave-de-mentira \
             -e SUPABASE_SERVICE_ROLE_KEY=chave-de-mentira \
             -e SENTRY_DSN=off \
-            deskcomm-worker:pr \
+            wconnect-worker:pr \
             exec tsx scripts/sonda-do-laco-de-event-log.ts)
 
           echo "$saida"
@@ -648,7 +648,7 @@ jobs:
             -e SUPABASE_SERVICE_ROLE_KEY=chave-de-mentira \
             -e SUPABASE_DB_URL=postgres://postgres:postgres@127.0.0.1:5432/postgres \
             -e SENTRY_DSN=off \
-            deskcomm-worker:pr
+            wconnect-worker:pr
 
           # ESPERA UM SINAL, e não o `docker ps`: o contêiner fica `running` 0,2s
           # depois do `run -d` — antes de o `tsx` importar a primeira linha. O loop
@@ -752,7 +752,7 @@ jobs:
             -e INTERNAL_SECRET=chave-de-mentira \
             -e APP_URL=http://127.0.0.1:3000 \
             -e TZ=UTC \
-            deskcomm-scheduler:pr
+            wconnect-scheduler:pr
 
           cron=nao
           for _ in $(seq 1 20); do
@@ -801,7 +801,7 @@ jobs:
   # passar sem que ninguém tivesse decidido isso.
   #
   # A previsão deste comentário foi MEDIDA: a quarta imagem
-  # (`deskcomm-voice-agent`, #677) chegou em 20/09/2026 e o gate não se mexeu.
+  # (`wconnect-voice-agent`, #677) chegou em 20/09/2026 e o gate não se mexeu.
   imagens-ok:
     if: always()
     runs-on: ubuntu-latest

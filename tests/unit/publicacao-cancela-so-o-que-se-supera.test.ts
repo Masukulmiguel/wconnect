@@ -58,10 +58,10 @@ function interpolar(modelo: string, c: Contexto): string {
 
 const WORKFLOW = "Publicar imagem Docker (GHCR)";
 const EVENTOS = {
-  pr: { event_name: "pull_request", ref: "refs/pull/42/merge", workflow: WORKFLOW, pr: 42, matriz: "deskcommcrm" },
-  main: { event_name: "push", ref: "refs/heads/main", workflow: WORKFLOW, matriz: "deskcommcrm" },
-  tag: { event_name: "push", ref: "refs/tags/v1.35.0", workflow: WORKFLOW, matriz: "deskcommcrm" },
-  dispatch: { event_name: "workflow_dispatch", ref: "refs/heads/main", workflow: WORKFLOW, matriz: "deskcommcrm" },
+  pr: { event_name: "pull_request", ref: "refs/pull/42/merge", workflow: WORKFLOW, pr: 42, matriz: "wconnect" },
+  main: { event_name: "push", ref: "refs/heads/main", workflow: WORKFLOW, matriz: "wconnect" },
+  tag: { event_name: "push", ref: "refs/tags/v1.35.0", workflow: WORKFLOW, matriz: "wconnect" },
+  dispatch: { event_name: "workflow_dispatch", ref: "refs/heads/main", workflow: WORKFLOW, matriz: "wconnect" },
 } satisfies Record<string, Contexto>;
 
 describe("publish-image: cancela só o que se supera", () => {
@@ -83,7 +83,7 @@ describe("publish-image: cancela só o que se supera", () => {
     expect(g(EVENTOS.tag)).toContain("refs/tags/v1.35.0");
     expect(g({ ...EVENTOS.tag, ref: "refs/tags/v1.36.0" })).not.toBe(g(EVENTOS.tag));
     // E a matriz entra no grupo: sem ela, o build do worker cancelaria o do app.
-    expect(g({ ...EVENTOS.pr, matriz: "deskcomm-worker" })).not.toBe(g(EVENTOS.pr));
+    expect(g({ ...EVENTOS.pr, matriz: "wconnect-worker" })).not.toBe(g(EVENTOS.pr));
   });
 
   // Reentrada — aprovação de `action_required` ou rerun, ambas tentativa ≥ 2 —

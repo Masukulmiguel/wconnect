@@ -5,7 +5,7 @@ set -euo pipefail
 # Idioma da CLI (t(), IDIOMA_CLI) — ver o cabeçalho de _i18n.sh. Sourced aqui
 # porque update.sh e os demais scripts do kit sourceiam _common.sh sem passar
 # por install.sh; instalação já em andamento no mesmo processo (install.sh)
-# mantém a escolha, já exportada em DESKCOMM_IDIOMA_CLI.
+# mantém a escolha, já exportada em WCONNECT_IDIOMA_CLI.
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/_i18n.sh"
 
 COMPOSE="docker-compose.prod.yml"
@@ -65,7 +65,7 @@ arquitetura_suportada_pelo_kit() {
 # O volume do Postgres NÃO entra: ele só existe no modo single-server e some
 # junto com o `down -v` que o próprio kit ensina como receita de "recomeçar" —
 # quem o encontrasse seria uma instalação derrubada, não uma instalação real.
-MARCA_INSTALACAO_NOME=".deskcomm-instalado"
+MARCA_INSTALACAO_NOME=".wconnect-instalado"
 
 # O nome do projeto Docker DESTA instalação, na ordem que importa. O
 # COMPOSE_PROJECT_NAME do `.env` manda quando existe (é o nome que os
@@ -110,7 +110,7 @@ conteiner_do_projeto_existe() {  # conteiner_do_projeto_existe <projeto compose>
 
 instalacao_real_do_kit_aqui() {
   local d nome
-  for d in "$PWD" "$PWD/deskcommcrm"; do
+  for d in "$PWD" "$PWD/wconnect"; do
     [ -f "$d/$COMPOSE" ] && [ -f "$d/.env" ] || continue
     [ -f "$d/$MARCA_INSTALACAO_NOME" ] && return 0
     while IFS= read -r nome; do
@@ -173,21 +173,21 @@ verificar_arquitetura_do_kit() {
       # guarda roda de novo no topo: sem esta trava o dono lia o mesmo aviso
       # duas vezes na mesma atualização. A variável não é exportada, então a
       # trava vale para ESTE processo e nenhum script filho herda o silêncio.
-      [ -n "${_DESKCOMM_AVISO_ARQ_DADO:-}" ] && return 0
-      _DESKCOMM_AVISO_ARQ_DADO=1
+      [ -n "${_WCONNECT_AVISO_ARQ_DADO:-}" ] && return 0
+      _WCONNECT_AVISO_ARQ_DADO=1
       # `printf` e não c_ylw: este ponto roda no TOPO do arquivo, e as cores só
       # são definidas algumas linhas abaixo (é a mesma razão do `printf` da
       # recusa logo abaixo). O aviso vai para o STDERR, como a recusa: o
       # agent.sh manda a saída do update.sh para arquivo e o dono lê o fim dela.
       printf '%s\n' \
-        "⚠ $(t "Este servidor usa arquitetura '{1}', e as imagens publicadas do DeskcommCRM são só linux/amd64." "$arch")" \
+        "⚠ $(t "Este servidor usa arquitetura '{1}', e as imagens publicadas do WConnect são só linux/amd64." "$arch")" \
         "  $(t "Como esta instalação JÁ EXISTE, sigo em frente: as imagens da versão alvo serão construídas nesta própria VPS.")" \
-        "  $(t "Leva de 15 a 25 minutos. Uma instalação NOVA nesta arquitetura precisaria de imagens multi-arquitetura, que o DeskcommCRM ainda não publica.")" >&2
+        "  $(t "Leva de 15 a 25 minutos. Uma instalação NOVA nesta arquitetura precisaria de imagens multi-arquitetura, que o WConnect ainda não publica.")" >&2
       return 0 ;;
   esac
 
   printf '%s\n' \
-    "✖ $(t "Este servidor usa arquitetura '{1}', mas as imagens publicadas do DeskcommCRM hoje são linux/amd64." "$arch")" \
+    "✖ $(t "Este servidor usa arquitetura '{1}', mas as imagens publicadas do WConnect hoje são linux/amd64." "$arch")" \
     "  $(t '  Use uma VPS x86_64/amd64. Repetir o download não resolve; ARM64 só será suportado quando houver imagens multi-arquitetura.' | sed 's/^  //')" >&2
   return 1
 }
@@ -196,13 +196,13 @@ verificar_arquitetura_do_kit() {
 # deve bloquear os dois caminhos que realmente instalam/atualizam contêineres.
 # update.sh sourceia aqui antes de qualquer trabalho; install.sh sourceia depois
 # de localizar/clonar o repo, mas ainda antes de consultar ou baixar imagens do
-# DeskcommCRM.
-_deskcomm_chamador="${BASH_SOURCE[1]:-}"
-_deskcomm_chamador="${_deskcomm_chamador##*/}"
-case "$_deskcomm_chamador" in
+# WConnect.
+_wconnect_chamador="${BASH_SOURCE[1]:-}"
+_wconnect_chamador="${_wconnect_chamador##*/}"
+case "$_wconnect_chamador" in
   install.sh|update.sh) verificar_arquitetura_do_kit || exit 1 ;;
 esac
-unset _deskcomm_chamador
+unset _wconnect_chamador
 
 # Proxy reverso desta instalação. Vem do .env (load_env), com default 'caddy' —
 # ou seja, toda instalação que já existe continua exatamente como está.
@@ -326,7 +326,7 @@ sincronizar_smtp_do_gotrue() {
   set_env_var "$env_sb" SMTP_USER "$(valor_compose "$usuario")"
   set_env_var "$env_sb" SMTP_PASS "$(valor_compose "$senha")"
   set_env_var "$env_sb" SMTP_ADMIN_EMAIL "$(valor_compose "$remetente")"
-  set_env_var "$env_sb" SMTP_SENDER_NAME "$(valor_compose "${nome:-${APP_NAME:-DeskcommCRM}}")"
+  set_env_var "$env_sb" SMTP_SENDER_NAME "$(valor_compose "${nome:-${APP_NAME:-WConnect}}")"
 }
 
 # ── `so_convite` fecha o caminho DIRETO do GoTrue (#1653) ────────────────────
@@ -396,7 +396,7 @@ atualizar_supabase_single_server() {
   local dir atual
   dir="$(dir_do_supabase)"
   [ -f "$dir/.env" ] || { c_red "⛔ $(t "Modo single-server sem {1}/.env — rode install-single-server.sh." "$dir")"; return 1; }
-  cp "$KIT_DIR/supabase-single-server.override.yml" "$dir/docker-compose.deskcomm.yml" || return 1
+  cp "$KIT_DIR/supabase-single-server.override.yml" "$dir/docker-compose.wconnect.yml" || return 1
   set_env_var "$dir/.env" COMPOSE_PROJECT_NAME "$(projeto_do_supabase)"
   atual="$(sed -n 's/^ref=//p' "$dir/.supabase-version" 2>/dev/null | tail -1)"
   if [ "$atual" != "$SUPABASE_REF" ]; then
@@ -425,7 +425,7 @@ atualizar_supabase_single_server() {
 # --volumes` devolve o nome LÓGICO (`waha-data`); passá-lo direto a `docker run
 # -v` cria/abre outro volume global com esse nome e produz um backup vazio que
 # parece válido. Perguntar ao contêiner pela montagem real mantém o prefixo do
-# projeto Compose (ex.: `deskcommcrm_waha-data`).
+# projeto Compose (ex.: `wconnect_waha-data`).
 #
 # A montagem também diz de QUE ESPÉCIE ela é, e `.Name` só responde por uma: num
 # bind de pasta do host (`- /srv/waha:/app/.sessions`) ele vem VAZIO, e ficar só
@@ -434,7 +434,7 @@ atualizar_supabase_single_server() {
 #
 # Sem contêiner não há montagem para ler, e o nome sai de
 # nome_do_projeto_atual, o mesmo que o compose usa: respeita COMPOSE_PROJECT_NAME
-# e mantém o `-` de uma pasta como `deskcomm-crm`.
+# e mantém o `-` de uma pasta como `wconnect`.
 volume_waha_data() {
   local container campos tipo nome origem
   container="$(dc ps -a -q waha 2>/dev/null || true)"
@@ -705,10 +705,10 @@ construir_aqui_e_subir() {  # construir_aqui_e_subir [versão alvo] → 0 se sub
 # O nome que o docker compose dá ao projeto quando ninguém passa -p: basename do
 # diretório, minúsculo, só [a-z0-9_-] — E com os `_`/`-` do INÍCIO aparados
 # (NormalizeProjectName faz TrimLeft). Sem essa aparada, uma pasta como
-# `/root/_deskcomm` faz o kit calcular `_deskcomm` enquanto os contêineres
-# carregam `deskcomm`: a instalação deixa de se reconhecer e passa a se tratar
-# como intrusa. Medido contra o docker compose v2.38.2 em `_deskcomm`,
-# `-deskcomm`, `_-_crm` e `_123` — todos divergiam.
+# `/root/_wconnect` faz o kit calcular `_wconnect` enquanto os contêineres
+# carregam `wconnect`: a instalação deixa de se reconhecer e passa a se tratar
+# como intrusa. Medido contra o docker compose v2.38.2 em `_wconnect`,
+# `-wconnect`, `_-_crm` e `_123` — todos divergiam.
 nome_do_projeto_compose() {  # nome_do_projeto_compose <diretório>
   local n
   n="$(basename "$1" | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9_-')"
@@ -723,8 +723,8 @@ nome_do_projeto_atual() {
 #
 # Duas cópias do repo na mesma VPS — o clone de produção e um de teste ao lado —
 # recebem o MESMO nome de projeto compose: o docker o deriva do basename do
-# diretório, e `/root/DeskcommCRM` e `/root/apagar6/DeskcommCRM` dão os dois
-# `deskcommcrm`. Os contêineres são UM conjunto só; os `.env` são dois. Cada
+# diretório, e `/root/WConnect` e `/root/apagar6/WConnect` dão os dois
+# `wconnect`. Os contêineres são UM conjunto só; os `.env` são dois. Cada
 # `up -d` recria o parque com as credenciais da SUA árvore, e a outra fica
 # falando com um transporte que não a reconhece mais.
 #
@@ -778,17 +778,17 @@ EOF
 # qual árvore é a dona e como assumir de propósito. Parar calado deixaria o dono
 # da VPS achando que o agente atualiza, quando ele desiste a cada 5 minutos.
 #
-# `DESKCOMM_ASSUMIR_PROJETO=1` é a saída para o caso legítimo — a instalação
+# `WCONNECT_ASSUMIR_PROJETO=1` é a saída para o caso legítimo — a instalação
 # mudou de pasta e os contêineres ainda apontam para a antiga. É explícita de
 # propósito: assumir por engano é justamente o defeito que esta função existe
 # para impedir.
 recusar_projeto_de_outra_arvore() {  # recusar_projeto_de_outra_arvore <como reportar>
   local alheias reportar="${1:-}"
   alheias="$(projeto_pertence_a_outra_arvore)" || return 0
-  [ "${DESKCOMM_ASSUMIR_PROJETO:-}" != "1" ] || return 0
+  [ "${WCONNECT_ASSUMIR_PROJETO:-}" != "1" ] || return 0
 
   local recado
-  recado="os contêineres do projeto '$(nome_do_projeto_atual)' foram criados por outra cópia do repo ($(printf '%s' "$alheias" | tr '\n' ' ')) — esta aqui é $(printf '%s' "${PROJECT_DIR:-$PWD}"). Duas cópias com o mesmo nome de projeto disputam os MESMOS contêineres e cada uma os recria com o .env dela, o que derruba as conexões de WhatsApp e quebra as credenciais. Deixe apenas UMA no cron (crontab -e) ou, se esta é mesmo a instalação boa, rode com DESKCOMM_ASSUMIR_PROJETO=1"
+  recado="os contêineres do projeto '$(nome_do_projeto_atual)' foram criados por outra cópia do repo ($(printf '%s' "$alheias" | tr '\n' ' ')) — esta aqui é $(printf '%s' "${PROJECT_DIR:-$PWD}"). Duas cópias com o mesmo nome de projeto disputam os MESMOS contêineres e cada uma os recria com o .env dela, o que derruba as conexões de WhatsApp e quebra as credenciais. Deixe apenas UMA no cron (crontab -e) ou, se esta é mesmo a instalação boa, rode com WCONNECT_ASSUMIR_PROJETO=1"
   if [ -n "$reportar" ] && command -v "$reportar" >/dev/null 2>&1; then
     "$reportar" "$recado"
   else
@@ -1057,7 +1057,7 @@ load_env() {
 # Vai pro diretório do projeto (onde está o compose) e carrega o .env.
 enter_project() {
   if [ -f "$COMPOSE" ]; then :;
-  elif [ -f "deskcommcrm/$COMPOSE" ]; then cd deskcommcrm;
+  elif [ -f "wconnect/$COMPOSE" ]; then cd wconnect;
   else die "$(t "Não achei {1}. Rode a partir da pasta do projeto." "$COMPOSE")"; fi
   [ -f .env ] || die "$(t "Falta o .env (rode install.sh primeiro).")"
   load_env .env
@@ -1225,7 +1225,7 @@ reaplicar_baseline() {
 # O caminho pode vir do processo que chamou (agent.sh exporta antes de rodar o
 # update.sh): o kit e o reporte são processos diferentes, e os dois precisam
 # apontar para o MESMO arquivo — é ele que carrega a história da rodada.
-RODADA_DO_BANCO_ARQUIVO="${RODADA_DO_BANCO_ARQUIVO:-${TMPDIR:-/tmp}/deskcomm-rodada-do-banco.$$}"
+RODADA_DO_BANCO_ARQUIVO="${RODADA_DO_BANCO_ARQUIVO:-${TMPDIR:-/tmp}/wconnect-rodada-do-banco.$$}"
 
 registrar_rodada_do_banco() {
   # $1 disputa (1|0), $2 retentativas, $3 passada em que fechou.
@@ -1268,13 +1268,13 @@ ler_rodada_do_banco() {
 # `publish-image.yml` digam o mesmo. Se você é um fork, é lá que está a lista do
 # que trocar junto — e, desde 18/09/2026, o CI do SEU fork não cobra este valor:
 # a asserção só vale quando o dono do runner é o dono deste repositório.
-IMG_NS="ghcr.io/melgarafael"
-IMG_APP="${IMG_NS}/deskcommcrm"
-IMG_WORKER="${IMG_NS}/deskcomm-worker"
-IMG_SCHEDULER="${IMG_NS}/deskcomm-scheduler"
+IMG_NS="ghcr.io/masukulmiguel"
+IMG_APP="${IMG_NS}/wconnect"
+IMG_WORKER="${IMG_NS}/wconnect-worker"
+IMG_SCHEDULER="${IMG_NS}/wconnect-scheduler"
 # Telefonia por SIP (#677): só roda com `telefonia` em COMPOSE_PROFILES, mas é
 # imagem NOSSA e segue a mesma versão das outras três (gravar_imagens).
-IMG_VOICE_AGENT="${IMG_NS}/deskcomm-voice-agent"
+IMG_VOICE_AGENT="${IMG_NS}/wconnect-voice-agent"
 
 # A última versão publicada (ex.: "1.2.1"), ou vazio se não deu para saber.
 #
@@ -1288,7 +1288,7 @@ IMG_VOICE_AGENT="${IMG_NS}/deskcomm-voice-agent"
 # alguém porque não deu para resolver um número de versão seria trocar um
 # problema de previsibilidade por um de disponibilidade.
 ultima_versao_publicada() {
-  local url="${1:-https://github.com/melgarafael/DeskcommCRM.git}" ref
+  local url="${1:-https://github.com/Masukulmiguel/wconnect.git}" ref
   command -v git >/dev/null 2>&1 || return 0
   # `grep -v -- -` descarta PRERELEASE (v1.11.0-rc1, v1.1.1-jmpo.1 — esta última
   # existe de verdade neste repo). O `--sort=-v:refname` do git põe o prerelease
@@ -1309,15 +1309,15 @@ ultima_versao_publicada() {
 # com `image:` falha a operação inteira, a instalação morre no passo de subir.
 #
 # ⚠️ O DONO E O REGISTRO SAEM DO `IMG_NS`, NUNCA DE UM LITERAL. Achado por
-# @galeonel no PR #605: as duas URLs abaixo tinham `melgarafael` cravado. Num
+# @galeonel no PR #605: as duas URLs abaixo tinham `wconnect` cravado. Num
 # fork que troca o `IMG_NS`, isso faz o pré-voo conferir os pacotes do UPSTREAM
 # enquanto `gravar_imagens` escreve no `.env` do cliente as referências do FORK
 # — a sonda mede um caminho e o usuário usa outro, que é a falha-em-verde do
 # passe 5 da triagem.
 #
 # E o literal escapava da catraca por acidente: `namespace-das-imagens.test.ts`
-# procura a string contígua `ghcr.io/melgarafael`, e a URL do token a parte em
-# `ghcr.io/token?scope=repository:melgarafael/`.
+# procura a string contígua `ghcr.io/masukulmiguel`, e a URL do token a parte em
+# `ghcr.io/token?scope=repository:wconnect/`.
 ghcr_status() {
   local img="$1" tag="$2" tok registry owner
   registry="${IMG_NS%%/*}"
@@ -1334,9 +1334,9 @@ ghcr_status() {
 
 # As TRÊS imagens existem e são públicas nesta referência?
 #
-# Perguntar pelas três juntas, e não só pela do app, é o ponto: `deskcomm-worker`
-# e `deskcomm-scheduler` nasceram depois das releases que já existem, então
-# `deskcomm-worker:1.2.1` nunca vai existir — a v1.2.1 é passado. Pinar as três
+# Perguntar pelas três juntas, e não só pela do app, é o ponto: `wconnect-worker`
+# e `wconnect-scheduler` nasceram depois das releases que já existem, então
+# `wconnect-worker:1.2.1` nunca vai existir — a v1.2.1 é passado. Pinar as três
 # numa versão sem conferir gravaria no .env do cliente duas referências
 # impossíveis, e o kit as construiria na VPS **em silêncio**, do topo da main:
 # app de uma release + worker/scheduler de outro código. Exatamente a mistura de
@@ -1347,7 +1347,7 @@ ghcr_status() {
 # quebraria o leitor daquele teste sem ganhar nada: o que importa é a lista.
 trio_publicado() {
   local tag="$1" i
-  for i in deskcommcrm deskcomm-worker deskcomm-scheduler deskcomm-voice-agent; do
+  for i in wconnect wconnect-worker wconnect-scheduler wconnect-voice-agent; do
     [ "$(ghcr_status "$i" "$tag")" = "200" ] || return 1
   done
   return 0
@@ -1429,7 +1429,7 @@ completar_pin_ausente() {  # completar_pin_ausente [envfile]
   # e o `.env` original chega intacto do outro lado, com as customizações.
   [ -w "$envfile" ] || return 0
 
-  for par in "WORKER_IMAGE:worker:deskcomm-worker" "SCHEDULER_IMAGE:scheduler:deskcomm-scheduler"; do
+  for par in "WORKER_IMAGE:worker:wconnect-worker" "SCHEDULER_IMAGE:scheduler:wconnect-scheduler"; do
     chave="${par%%:*}"; svc="$(printf '%s' "$par" | cut -d: -f2)"; repo="${par##*:}"
 
     # LACUNA apenas. Valor explícito (mesmo em canal móvel) é intocável.
@@ -1509,7 +1509,7 @@ completar_segredos_da_voz() {  # completar_segredos_da_voz [envfile]
     # lacuna. Só a AUSÊNCIA da linha é preenchida.
     grep -qE "^${chave}=" "$envfile" && continue
     if [ "$chave" = "WACALLS_ADMIN_USER" ]; then
-      set_env_var "$envfile" "$chave" "deskcomm"
+      set_env_var "$envfile" "$chave" "wconnect"
     else
       set_env_var "$envfile" "$chave" "$(openssl rand -hex 32)"
     fi
@@ -1613,7 +1613,7 @@ owner_id_by_email() {
 # primeira (o filtro remove tudo que casa com o marcador, e as duas linhas
 # casavam). Medido na VPS: depois de instalar, sobrava só o agente e o CRM ficava
 # SEM o drain de eventos — a automação inteira parada, em silêncio.
-cron_tag() { printf '# deskcomm:%s:%s' "${PROJECT_DIR:-$PWD}" "${1:?papel da linha (drain|agent)}"; }
+cron_tag() { printf '# wconnect:%s:%s' "${PROJECT_DIR:-$PWD}" "${1:?papel da linha (drain|agent)}"; }
 
 # Puro (testável sem tocar no crontab real): lê o crontab atual em stdin e
 # imprime o novo. Tira as linhas DESTA instalação — pelo marcador, e também
@@ -1653,7 +1653,7 @@ setup_event_log_drain_cron() {
   # de reler este arquivo (bloco 7): o corpo que roda na atualização é o da
   # versão antiga, e só as funções são as novas. Fora do update.sh (install.sh
   # nasce marcado; o agent.sh chama a troca por conta própria) não se troca.
-  if [ "$(basename "$0")" = update.sh ] && [ -z "${DESKCOMM_AGENT_REPORT:-}" ]; then
+  if [ "$(basename "$0")" = update.sh ] && [ -z "${WCONNECT_AGENT_REPORT:-}" ]; then
     trocar_segredo_do_cron_vazado || true
   fi
   command -v crontab >/dev/null 2>&1 || { c_ylw "$(t "⚠ 'crontab' não encontrado — instale o pacote 'cron' e rode de novo pra ativar as automações.")"; return 0; }
@@ -1769,7 +1769,7 @@ setup_event_log_drain_cron() {
 # caso deixa SEGREDO_DO_CRON_TROCADO=1); 1 quando tentou e não conseguiu —
 # nesse caso o `.env` volta ao que era e a marca NÃO é gravada, para a próxima
 # execução tentar de novo.
-MARCA_SEGREDO_DO_CRON_NOME=".deskcomm-segredo-do-cron-trocado"
+MARCA_SEGREDO_DO_CRON_NOME=".wconnect-segredo-do-cron-trocado"
 
 marcar_segredo_do_cron_como_novo() {
   # Só marca se ESTE host nunca teve a linha antiga: reinstalar por cima de uma
@@ -1855,7 +1855,7 @@ setup_update_agent_cron() {
 
   # `cd` explícito: o agent.sh chama enter_project(), que acha o projeto pelo
   # DIRETÓRIO CORRENTE. No cron o CWD é o home do dono do crontab — sem o cd,
-  # a linha só funciona por acidente (instalação padrão em /root/deskcommcrm) e
+  # a linha só funciona por acidente (instalação padrão em /root/wconnect) e
   # morre calada a cada 5 minutos em qualquer REPO_DIR customizado ou /opt.
   # A assinatura legada inclui o PROJECT_DIR: é o que distingue a linha desta
   # instalação da linha de uma vizinha, que roda o mesmo agent.sh em outra pasta.
@@ -1910,7 +1910,7 @@ ensure_encryption_key() {
 # filtros que queremos, aplicados na origem, sem precisar ordenar nada aqui.
 #
 # O repositório sai do `origin` (e não de uma constante) para que um fork com
-# releases próprias funcione sem editar o kit; `DESKCOMM_RELEASES_LATEST_URL`
+# releases próprias funcione sem editar o kit; `WCONNECT_RELEASES_LATEST_URL`
 # troca o endereço inteiro quando é preciso.
 #
 # Devolve string VAZIA quando não dá para saber (sem rede, API fora, fork sem
@@ -1923,7 +1923,7 @@ ultima_release_estavel() {
 
   # Endereço explícito primeiro: é o caminho dos testes (um JSON local via
   # `file://`) e de quem opera um fork com releases num lugar próprio.
-  url="${DESKCOMM_RELEASES_LATEST_URL:-}"
+  url="${WCONNECT_RELEASES_LATEST_URL:-}"
 
   if [ -z "$url" ]; then
     case "$origem" in

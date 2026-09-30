@@ -18,7 +18,7 @@
 - Fases correm em `gov/G<N>` a partir de `main`. Nunca usar namespace `vendaval/*`
   nem `feat/EPIC-*`.
 - Virada de fase = ato humano (checkpoint `.approved` + merge com
-  `DESKCOMM_GOV_PHASE_MERGE=1`, ou PR — escolha do dono no checkpoint).
+  `WCONNECT_GOV_PHASE_MERGE=1`, ou PR — escolha do dono no checkpoint).
 - Atenção permanente: a cadeia `vendaval/F2-*` pode ter migrations não mergeadas.
   O gate de migration valida a sequência `NNNN` contra TODAS as branches locais.
 

@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   corridaInternaDeFork,
+  DONO_COM_CAIXA_DESTE_REPO,
   DONO_DESTE_REPO,
   donoConfiavelDoRunner,
   donoDo,
@@ -18,7 +19,7 @@ import {
  * ── Por que este arquivo existe ────────────────────────────────────────────
  *
  * `tests/shell/update-guard.test.sh` e `hostgator-setup-kit/test-validators.sh`
- * repetiam `ghcr.io/melgarafael` à mão em 31 lugares — fixtures E asserções.
+ * repetiam `ghcr.io/masukulmiguel` à mão em 31 lugares — fixtures E asserções.
  * Isso amarrava a suíte a UM publicador: um fork que publica as próprias
  * imagens ficava vermelho em 4 casos sem ter quebrado nada, com a mensagem de
  * falha apontando para o valor "certo" do upstream. Derivar tudo de `IMG_NS`
@@ -56,7 +57,7 @@ import {
  * de forma coerente — kit + compose + `.env` de exemplo — onde há troca:
  *
  *   ACTIONS, dono=outrodono, IMG_NS dele   → 0 ✗ 1 ↓   corrida de fork: não cobra
- *   ACTIONS, dono=melgarafael, NS alheio   → 2 ✗       contra nós, cobra como antes
+ *   ACTIONS, dono=wconnect, NS alheio   → 2 ✗       contra nós, cobra como antes
  *   fora do Actions, IMG_NS com typo       → 1 ✗       o erro de digitação segue pego
  *   só NAMESPACE_DESTE_REPO trocado, p/ cá → 1 ✗       na URL derivada, não na âncora
  *   …o mesmo, com a URL fixa como antes    → 0 ✗ 1 ↓   ← é por isso que ela DERIVA
@@ -137,13 +138,13 @@ const RECADO_AO_FORK =
  *
  * Ela dizia "troque em três lugares, e só neles — nenhum OUTRO arquivo do repo
  * repete esse valor". @galeonel seguiu à risca (PR #605) e descobriu que
- * `ghcr_status`, em `_common.sh`, tinha `melgarafael` cravado nas duas URLs: o
+ * `ghcr_status`, em `_common.sh`, tinha `wconnect` cravado nas duas URLs: o
  * fork ficava com o pré-voo conferindo os pacotes do UPSTREAM enquanto
  * `gravar_imagens` escrevia no `.env` do cliente as referências do FORK.
  *
  * A catraca não pegava por acidente de forma: ela procura a string contígua
- * `ghcr.io/melgarafael`, e a URL do token parte o valor em
- * `ghcr.io/token?scope=repository:melgarafael/`. Instrução que promete mais do
+ * `ghcr.io/masukulmiguel`, e a URL do token parte o valor em
+ * `ghcr.io/token?scope=repository:wconnect/`. Instrução que promete mais do
  * que o gate confere é pior que instrução nenhuma — quem a segue conclui que
  * terminou.
  */
@@ -237,7 +238,21 @@ describe("o kit aponta para o que o CI realmente publica", () => {
     // SÓ aquele literal faria a âncora se calar contra o upstream. Derivando, o
     // mesmo commit fica vermelho AQUI, contra seis arquivos que ele não tocou.
     // Medido nos dois sentidos, com a URL fixa e com ela derivada (ver cabeçalho).
-    const repo = `https://github.com/${DONO_DESTE_REPO}/DeskcommCRM`;
+    //
+    // Só que a âncora é minúscula POR REGRA DO GHCR, e a URL do github.com é o
+    // login, com caixa (`Masukulmiguel/wconnect` — o que o repo inteiro já usa).
+    // A igualdade abaixo é o que tranca as DUAS superfícies: trocar só a âncora
+    // ou só a caixa do login deixa este caso vermelho, mesmo contrato da derivação.
+    // Medido nas três rodadas: âncora trocada só → 6 ✗; caixa trocada só → 5 ✗;
+    // nada trocado → 4 ✗ (só as do ambiente, sem bash/grep no Windows).
+    expect(
+      DONO_COM_CAIXA_DESTE_REPO.toLowerCase(),
+      `${DONO_COM_CAIXA_DESTE_REPO} e ${NAMESPACE_DESTE_REPO} deixaram de ser o ` +
+        "mesmo dono: o GHCR é minúsculo por regra do registro e o github.com usa o " +
+        "login com caixa. Troque os dois literais juntos, em " +
+        "tests/unit/_identidade-deste-repo.ts.",
+    ).toBe(DONO_DESTE_REPO);
+    const repo = `https://github.com/${DONO_COM_CAIXA_DESTE_REPO}/wconnect`;
     for (const script of ["install.sh", "comecar.sh"]) {
       const texto = fs.readFileSync(path.join(RAIZ, "hostgator-setup-kit", script), "utf8");
       expect(texto).toContain(`REPO_URL="\${REPO_URL:-${repo}.git}"`);
@@ -275,7 +290,7 @@ describe("o kit aponta para o que o CI realmente publica", () => {
         log=$(mktemp)
         trap 'rm -f "$log"' EXIT
         # O dublê registra em arquivo porque a função captura stdout do curl.
-        ghcr_status deskcommcrm 1.2.3
+        ghcr_status wconnect 1.2.3
         printf '\\n'
         cat "$log"
       `,
@@ -286,8 +301,8 @@ describe("o kit aponta para o que o CI realmente publica", () => {
       );
       expect(saida.trim().split("\n")).toEqual([
         "200",
-        `https://${registry}/token?scope=repository:${owner}/deskcommcrm:pull&service=${registry}`,
-        `https://${registry}/v2/${owner}/deskcommcrm/manifests/1.2.3`,
+        `https://${registry}/token?scope=repository:${owner}/wconnect:pull&service=${registry}`,
+        `https://${registry}/v2/${owner}/wconnect/manifests/1.2.3`,
       ]);
     },
   );
@@ -308,7 +323,7 @@ describe("o kit aponta para o que o CI realmente publica", () => {
 
   it("as imagens do kit são exatamente as que o workflow constrói", () => {
     // Eram três até a telefonia por SIP entrar como módulo opcional (#677) e
-    // trazer a quarta (`deskcomm-voice-agent`). O número não é o invariante — a
+    // trazer a quarta (`wconnect-voice-agent`). O número não é o invariante — a
     // IGUALDADE entre as duas listas é; prendê-lo em 3 fez este caso reprovar a
     // imagem nova em vez de reprovar a divergência. Fica um piso, que é o que o
     // caso precisa para não passar sobre lista vazia.
@@ -337,7 +352,7 @@ describe("catraca: ninguém mais repete o namespace", () => {
     ".env.hostgator.example",
     // FIXTURE de comentário REAL de PR, capturada para os instrumentos de triagem.
     // O literal aparece dentro do texto que um humano escreveu num PR
-    // (`ghcr.io/melgarafael/deskcommcrm:1.29.0`, citado ao diagnosticar o pdf.js).
+    // (`ghcr.io/masukulmiguel/wconnect:1.29.0`, citado ao diagnosticar o pdf.js).
     //
     // Entra aqui e não em `excluiDir` de propósito: `PERMITIDO` casa o caminho
     // relativo EXATO, então o perdão vale para ESTE arquivo e só para ele —

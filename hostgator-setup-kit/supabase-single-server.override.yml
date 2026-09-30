@@ -20,7 +20,7 @@ services:
     networks:
       default:
         aliases: [envoy, kong]
-      deskcomm_private:
+      wconnect_private:
         aliases: [supabase-envoy]
 
   auth:
@@ -62,7 +62,7 @@ services:
     container_name: !reset null
     networks:
       default: {}
-      deskcomm_private:
+      wconnect_private:
         aliases: [supabase-db]
 
   supavisor:
@@ -72,6 +72,6 @@ services:
     ports: !reset []
 
 networks:
-  deskcomm_private:
+  wconnect_private:
     external: true
-    name: ${SINGLE_SERVER_NETWORK:-deskcomm_single_server}
+    name: ${SINGLE_SERVER_NETWORK:-wconnect_single_server}

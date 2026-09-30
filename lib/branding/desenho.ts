@@ -34,7 +34,7 @@ export const SIMBOLO = {
 } as const;
 
 /**
- * O logotipo: símbolo + "Deskcomm" + "CRM", com o texto já convertido em
+ * O logotipo: símbolo + "WConnect" + "CRM", com o texto já convertido em
  * caminhos — não depende de fonte instalada nem de `@font-face`.
  */
 export const LOGOTIPO = {

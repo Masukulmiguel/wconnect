@@ -3,11 +3,11 @@
 [🇧🇷 Português](README.md) · 🇺🇸 English · [🇪🇸 Español](README.es.md)
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/brand/deskcomm-logo-dark.svg">
-  <img src="docs/brand/deskcomm-logo.svg" alt="Deskcomm CRM" width="420">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/brand/wconnect-logo-dark.svg">
+  <img src="docs/brand/wconnect-logo.svg" alt="WConnect CRM" width="420">
 </picture>
 
-# 🛠️ DeskcommCRM — The open-source AI Sales OS for WhatsApp
+# 🛠️ WConnect — The open-source AI Sales OS for WhatsApp
 
 **AI agents that answer, qualify and sell on WhatsApp — inside an open-source CRM running on your own server.**
 **No subscription, no gated features, your data stays yours. The open alternative to Kommo, Octadesk and Intercom.**
@@ -16,7 +16,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript)](https://www.typescriptlang.org)
 [![Supabase](https://img.shields.io/badge/Supabase-Postgres%2BAuth%2BStorage-3ecf8e?logo=supabase)](https://supabase.com)
 [![Self-hosted](https://img.shields.io/badge/self--hosted-one%20command-orange)](hostgator-setup-kit/)
-[![CI](https://github.com/melgarafael/DeskcommCRM/actions/workflows/ci.yml/badge.svg)](https://github.com/melgarafael/DeskcommCRM/actions/workflows/ci.yml)
+[![CI](https://github.com/Masukulmiguel/wconnect/actions/workflows/ci.yml/badge.svg)](https://github.com/Masukulmiguel/wconnect/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 [**⚡ Install**](#-install-on-your-vps-the-main-path) · [**🔄 Update**](#-updating) · [**🧭 Vision**](VISION.md) · [**🏗️ Architecture**](ARCHITECTURE.md) · [**🤝 Contributing**](CONTRIBUTING.en.md) · [**🗺️ Roadmap**](#%EF%B8%8F-roadmap)
@@ -27,19 +27,17 @@
 
 > ### ☁️ Run this CRM in production with one command
 >
-> DeskcommCRM is developed in **partnership with HostGator**: the [`hostgator-setup-kit/`](hostgator-setup-kit/)
+> WConnect runs on any VPS with Docker: the [`hostgator-setup-kit/`](hostgator-setup-kit/)
 > installs the full CRM (app + WhatsApp + database) on a VPS with a single command, and the
 > [production runbook](docs/runbooks/waha-hostgator.md) assumes that environment.
 >
-> **[👉 Get the HostGator VPS with the partnership discount](https://www.hostgator.com.br/52708-141-3-52.html)** —
-> São Paulo datacenter, ideal for WhatsApp running 24/7. *(partner link — subscribing through it supports the project and costs you less)*
 >
 > **No server yet?** Run this **on your own computer** (macOS, Linux or WSL). It tells you which
 > plan to buy — with the runbook's real numbers, not a "it depends" — and hands you the exact
 > command for your case:
 >
 > ```bash
-> curl -fsSL https://raw.githubusercontent.com/melgarafael/DeskcommCRM/main/hostgator-setup-kit/comecar.sh | bash
+> curl -fsSL https://raw.githubusercontent.com/Masukulmiguel/wconnect/main/hostgator-setup-kit/comecar.sh | bash
 > ```
 >
 > *(prefer to read before executing? clone the repo and run `bash hostgator-setup-kit/comecar.sh` —
@@ -72,8 +70,8 @@ That is not a freeze: the terminal is hiding your password. Type (or paste) it a
 Once inside the VPS:
 
 ```bash
-git clone https://github.com/melgarafael/DeskcommCRM.git
-cd DeskcommCRM
+git clone https://github.com/Masukulmiguel/wconnect.git
+cd WConnect
 bash hostgator-setup-kit/install.sh
 ```
 
@@ -84,7 +82,7 @@ prebuilt. If Docker is missing, the installer asks and installs it for you.
 
 | Item | Where to get it |
 |---|---|
-| **VPS with Docker** | [HostGator](https://www.hostgator.com.br/52708-141-3-52.html) (partnership) — or any VPS with Docker. 4 GB RAM recommended |
+| **VPS with Docker** | Any VPS with Docker. 4 GB RAM recommended |
 | **Domain** | An **A** record pointing to your VPS IP (e.g. `crm.yourcompany.com`) |
 | **Database** | Free account at [supabase.com](https://supabase.com) — 3 keys + the **Session pooler** connection string |
 | **AI** | An **OpenRouter**, **Anthropic** or **OpenAI** key — the installer asks which one you want |
@@ -136,19 +134,19 @@ prompt and contribute. To have them in **any folder** — including before cloni
 machine — run once:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/melgarafael/DeskcommCRM/main/scripts/instalar-guias.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Masukulmiguel/wconnect/main/scripts/instalar-guias.sh | bash
 ```
 
 Then open a new session of your assistant and say *"I want to install the CRM on my VPS"*: asking
 for the subject in Portuguese triggers the right guide in any of the five. To call a guide by name,
-each one has its own way — `/deskcomm-instalar` in Claude Code, Cursor and Antigravity;
-`$deskcomm-instalar` in Codex; in OpenCode, ask for it by name, in natural language.
+each one has its own way — `/wconnect-instalar` in Claude Code, Cursor and Antigravity;
+`$wconnect-instalar` in Codex; in OpenCode, ask for it by name, in natural language.
 
 The guides do **not** update themselves: running the same command again brings the new version. To
 undo:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/melgarafael/DeskcommCRM/main/scripts/instalar-guias.sh | bash -s -- --remover
+curl -fsSL https://raw.githubusercontent.com/Masukulmiguel/wconnect/main/scripts/instalar-guias.sh | bash -s -- --remover
 ```
 
 With the repository already cloned, the guides come inside it (`.agents/skills/`) and none of that
@@ -183,7 +181,7 @@ broken app back.
 ### From the terminal
 
 ```bash
-cd /path/to/DeskcommCRM
+cd /path/to/WConnect
 bash hostgator-setup-kit/update.sh
 ```
 
@@ -233,7 +231,7 @@ backup is the last resort.
 
 ## ✨ What is it
 
-**Deskcomm** comes from **Desk** + **comm** (commerce): your entire sales operation on a single desk, run by people and AI agents working together.
+**WConnect** comes from **Desk** + **comm** (commerce): your entire sales operation on a single desk, run by people and AI agents working together.
 
 The project was born as an e-commerce CRM — and the open-source community took it much further: today it runs in **clinics, real-estate agencies, info-product businesses, agencies, stores and service providers** — any business that sells over WhatsApp. The product followed that shift and became a **sales operating system**: AI agents with per-tenant RAG answer customers, qualify leads, move them through the pipeline, trigger automations and know when to hand off to a human — with the whole CRM exposed via **MCP** so agents can truly operate it. The full story is in [`VISION.md`](VISION.md).
 
@@ -302,8 +300,8 @@ Details: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 > This section is for people who will change the code.
 
 ```bash
-git clone https://github.com/melgarafael/DeskcommCRM.git
-cd DeskcommCRM
+git clone https://github.com/Masukulmiguel/wconnect.git
+cd WConnect
 
 nvm use                     # Node 22
 npm install -g pnpm && pnpm install
@@ -331,7 +329,7 @@ App: <http://localhost:3000> · Health check: <http://localhost:3000/api/v1/heal
 ## 📁 Structure
 
 ```
-DeskcommCRM/
+WConnect/
 ├── app/                    # Next.js App Router
 │   ├── (admin)/            # super-admin routes (impersonate, tenants)
 │   ├── (public)/           # Login, recovery
@@ -365,7 +363,7 @@ pnpm test:e2e      # Playwright (requires dev server)
 **These checks are required** to merge into `main`. This list has already said "four" and then "five" — **measure, don't trust it**:
 
 ```bash
-gh api repos/melgarafael/DeskcommCRM/branches/main/protection \
+gh api repos/Masukulmiguel/wconnect/branches/main/protection \
   --jq '.required_status_checks.contexts|join(", ")'
 # on 2026-08-14: verify, build-and-size, invariants, e2e, imagens-ok
 ```
@@ -439,9 +437,9 @@ Two required gates do **not** fit there and only run in CI: `e2e` (needs a local
 
 ## 🐛 Reporting bugs
 
-Open an [issue](https://github.com/melgarafael/DeskcommCRM/issues/new/choose) — the template asks for what we need (environment, `/api/v1/health`, steps). Running `bash hostgator-setup-kit/healthcheck.sh` and pasting the output helps a lot.
+Open an [issue](https://github.com/Masukulmiguel/wconnect/issues/new/choose) — the template asks for what we need (environment, `/api/v1/health`, steps). Running `bash hostgator-setup-kit/healthcheck.sh` and pasting the output helps a lot.
 
-For **security vulnerabilities**, **do NOT open a public issue** — use [private vulnerability reporting](https://github.com/melgarafael/DeskcommCRM/security/advisories/new). Details in [`SECURITY.md`](SECURITY.md).
+For **security vulnerabilities**, **do NOT open a public issue** — use [private vulnerability reporting](https://github.com/Masukulmiguel/wconnect/security/advisories/new). Details in [`SECURITY.md`](SECURITY.md).
 
 ---
 
@@ -463,7 +461,7 @@ For **security vulnerabilities**, **do NOT open a public issue** — use [privat
 
 ### 🔮 Next
 
-- **Public MCP** — CRM capabilities exposed to the agent ecosystem: plug in any agent and it operates Deskcomm.
+- **Public MCP** — CRM capabilities exposed to the agent ecosystem: plug in any agent and it operates WConnect.
 - **Niche templates** — ready-made pipelines and vocabularies for clinics, real estate, info-products and services (e-commerce already shipped).
 - **Integrations** — VTEX and Shopify via the adapter pattern (Nuvemshop already shipped).
 - **Probabilistic identity** — contact unification across channels.
@@ -472,10 +470,8 @@ For **security vulnerabilities**, **do NOT open a public issue** — use [privat
 
 ## 💬 Community
 
-- **Discussions:** [GitHub Discussions](https://github.com/melgarafael/DeskcommCRM/discussions)
-- **Issues:** [GitHub Issues](https://github.com/melgarafael/DeskcommCRM/issues)
-- **Instagram:** [@melgarafael](https://www.instagram.com/melgarafael)
-- **YouTube:** [youtube.com/@melgarafael](https://www.youtube.com/@melgarafael)
+- **Discussions:** [GitHub Discussions](https://github.com/Masukulmiguel/wconnect/discussions)
+- **Issues:** [GitHub Issues](https://github.com/Masukulmiguel/wconnect/issues)
 
 ---
 
@@ -500,15 +496,15 @@ This is a **self-hosted** project: each person runs the CRM on their **own infra
 
 - **WAHA** ([devlikeapro](https://waha.devlikeapro.com/)) — WhatsApp engine.
 - **Supabase** — Postgres + Auth + Storage + Realtime in one stack.
-- **HostGator** — the infrastructure partnership that made one-command self-hosting possible.
+- **HostGator** — reference infrastructure for the one-command self-host runbook.
 - **Anthropic**, **OpenAI** and **OpenRouter** — the AI providers the CRM knows how to use.
 - **shadcn/ui** — component base.
-- The community that took Deskcomm from e-commerce to clinics, real estate, info-products and beyond — you defined what this project is.
+- The community that took WConnect from e-commerce to clinics, real estate, info-products and beyond — you defined what this project is.
 
 ---
 
 <div align="center">
 
-**Built with ☕ in Brasil** · **Made for the community**
+**Built with ☕ · Made for the community**
 
 </div>
