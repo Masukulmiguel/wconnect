@@ -3181,7 +3181,7 @@ np_ok /root/_wconnect    wconnect
 np_ok /root/-wconnect    wconnect
 np_ok /root/_-_crm       crm
 np_ok /root/_123         123
-np_ok /root/wconnect.crm wconnect
+np_ok /root/wconnect.crm wconnectcrm
 np_ok /root/crm_cliente  crm_cliente
 
 echo "re-execução: o kit é chamado por caminho RELATIVO, como o README manda"
